@@ -1,6 +1,8 @@
 package nl.getthere.dkvt_crawler.crawlers;
 
+import nl.getthere.dkvt_crawler.models.NewspaperFamAdvertIdModel;
 import nl.getthere.dkvt_crawler.models.NewspaperIdModel;
+import nl.getthere.dkvt_crawler.reposiroties.NewspaperFamAdvertIdRepo;
 import nl.getthere.dkvt_crawler.reposiroties.NewspaperIdRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -13,9 +15,9 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -28,13 +30,16 @@ public class NewspaperPageCrawler {
     @Autowired
     private NewspaperIdRepository idRepo;
 
+    @Autowired
+    private NewspaperFamAdvertIdRepo famAdvertIdRepo;
+
     /**
      * Get all dates in between a certain range
      * @return List of local date objects
      */
     private List<LocalDate> getDatesInRange() {
         LocalDate endDate = LocalDate.now();
-        LocalDate startDate = LocalDate.of(2018, Month.MARCH, 10);
+        LocalDate startDate = LocalDate.of(2018, Month.MARCH, 1);
 
         long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate);
         return IntStream.iterate(0, i -> i + 1)
@@ -98,27 +103,81 @@ public class NewspaperPageCrawler {
         return null;
     }
 
+    /**
+     * Recursive function to scan for family advertisements and navigate through newspaper
+     * @param url of the page needed to scan
+     */
     private void scanForFamAdverts(String url) {
         String currentUrl = url;
         System.out.println("BASE METHOD URL =" + currentUrl);
         setBaseUrl(currentUrl);
 
         List<WebElement> categories = driver.findElements(By.xpath("//a[contains(@href, 'javascript:showArticle')]"));
+        Set<WebElement> famAdverts = new HashSet<>();
 
-        for (WebElement catagory : categories) {
-            if (catagory.getText().equals("Familieberichten")) {
-                System.out.println("Famillieberichten categorie gevonden!");
-            } else {
+        for (WebElement category : categories) {
+            if (category.getText().equals("Familieberichten")) {
+                famAdverts.add(category);
+            }
+            else {
                 WebElement nextPage = flipPage();
-                if(nextPage != null) {
+
+                if (nextPage != null) {
                     nextPage.click();
                     currentUrl = driver.getCurrentUrl();
                     scanForFamAdverts(currentUrl);
                 }
-                System.out.println("Geen familieberichten gevonden in deze krant");
                 return;
             }
         }
+        saveFamAdvertId(famAdverts);
+    }
+
+    /**\
+     * Method to save the advertisements into the database
+     * @param famAdverts a set of webelements crawled form a certain page
+     */
+    private void saveFamAdvertId(Set<WebElement> famAdverts) {
+
+        for (WebElement famAdvert : famAdverts) {
+            String href = famAdvert.getAttribute("href");
+            System.out.println(href);
+
+            Pattern pattern = Pattern.compile("'(.*?)'");
+            Matcher matcher = pattern.matcher(href);
+
+            NewspaperFamAdvertIdModel adModel = new NewspaperFamAdvertIdModel();
+
+            if(matcher.find()) {
+                String advertID = matcher.group(1);
+                String[] splittedAdvertId = advertID.split("-");
+
+                String abbriviation = splittedAdvertId[0];
+                String date = splittedAdvertId[1];
+
+                adModel.setName(advertID);
+                adModel.setNewspaperAbbriviation(abbriviation);
+                adModel.setDate(date);
+
+                if(!isDuplicate(adModel))
+                    famAdvertIdRepo.save(adModel);
+            }
+        }
+    }
+
+    /**
+     * Checks if model is already in database
+     * @param model of fam adverts
+     * @return boolean
+     */
+    private boolean isDuplicate(NewspaperFamAdvertIdModel model) {
+        List<NewspaperFamAdvertIdModel> models = (List<NewspaperFamAdvertIdModel>) famAdvertIdRepo.findAll();
+
+        for(NewspaperFamAdvertIdModel c : models) {
+            if(model.getName().equals(c.getName()))
+                return true;
+        }
+        return false;
     }
 
     @PostConstruct
@@ -127,7 +186,7 @@ public class NewspaperPageCrawler {
         List<String> urls = saveTempUrls();
 
         for(String url : urls) {
-            System.out.println("IK BEN HIER!");
+            System.out.println("IK BEN HIER! " + url);
             scanForFamAdverts(url);
         }
         quitDriver();
