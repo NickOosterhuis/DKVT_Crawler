@@ -2,16 +2,17 @@ package nl.getthere.dkvt_crawler.crawlers;
 
 
 import nl.getthere.dkvt_crawler.models.NewspaperAbbreviationModel;
-import nl.getthere.dkvt_crawler.models.NewspaperIdModel;
+import nl.getthere.dkvt_crawler.models.FullNewspaperIdMordel;
 import nl.getthere.dkvt_crawler.reposiroties.NewspaperAbbreviationRepository;
-import nl.getthere.dkvt_crawler.reposiroties.NewspaperIdRepository;
+import nl.getthere.dkvt_crawler.reposiroties.FullNewspaperIdRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 
@@ -19,13 +20,15 @@ import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
 
 @Component
 @Order(2)
-public class NewspaperIdCrawler {
+public class FullNewspaperIdCrawler {
 
     @Autowired
     private NewspaperAbbreviationRepository abbreviationRepo;
 
     @Autowired
-    private NewspaperIdRepository idRepo;
+    private FullNewspaperIdRepository idRepo;
+
+    private static final Logger logger = LoggerFactory.getLogger(FullNewspaperIdCrawler.class);
 
     /**
      * Save full newspaper id to database
@@ -43,10 +46,10 @@ public class NewspaperIdCrawler {
                 formatted[0] = firstElement;
             }
 
-            NewspaperIdModel newspaperIdModel = new NewspaperIdModel();
+            FullNewspaperIdMordel newspaperIdModel = new FullNewspaperIdMordel();
             newspaperIdModel.setName(firstElement);
 
-            System.out.println(firstElement);
+            logger.info("Crawled newspaper is: " + firstElement);
             idRepo.save(newspaperIdModel);
         }
     }

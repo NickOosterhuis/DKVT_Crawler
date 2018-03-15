@@ -1,12 +1,10 @@
 package nl.getthere.dkvt_crawler.crawlers;
 
-import nl.getthere.dkvt_crawler.models.NewspaperFamAdvertIdModel;
-import nl.getthere.dkvt_crawler.reposiroties.NewspaperFamAdvertIdRepo;
+import nl.getthere.dkvt_crawler.models.FamAdPageModel;
+import nl.getthere.dkvt_crawler.reposiroties.FamPageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +19,7 @@ import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.setupDriver;
 public class FamAdPageCrawler {
 
     @Autowired
-    private NewspaperFamAdvertIdRepo famAdvertIdRepo;
+    private FamPageRepository famAdvertIdRepo;
 
     //@PostConstruct
     private void crawl() {
@@ -37,9 +35,9 @@ public class FamAdPageCrawler {
 
     private Set<String> saveTempUrls() {
         Set<String> tempUrls = new HashSet<>();
-        List<NewspaperFamAdvertIdModel> famAdvertIdModels = (List<NewspaperFamAdvertIdModel>) famAdvertIdRepo.findAll();
+        List<FamAdPageModel> famAdvertIdModels = (List<FamAdPageModel>) famAdvertIdRepo.findAll();
 
-        for (NewspaperFamAdvertIdModel model : famAdvertIdModels) {
+        for (FamAdPageModel model : famAdvertIdModels) {
             String abbreviation = model.getNewspaperAbbreviation();
             String publicationNumber = model.getPublicationNumber();
             String pageNumber = model.getPageNumber();
