@@ -28,6 +28,30 @@ public class NewspaperIdCrawler {
     private NewspaperIdRepository idRepo;
 
     /**
+     * Save full newspaper id to database
+     */
+    //@PostConstruct
+    private void saveFullId() {
+        Set<String> formattedStrings = formatNewsPaperUrl();
+
+        for (String string : formattedStrings) {
+            String[] formatted = string.split("(\\d)");
+            String firstElement = formatted[0];
+
+            if(firstElement.charAt(firstElement.length() - 1) == '-') {
+                firstElement = firstElement.substring(0, firstElement.length() -1);
+                formatted[0] = firstElement;
+            }
+
+            NewspaperIdModel newspaperIdModel = new NewspaperIdModel();
+            newspaperIdModel.setName(firstElement);
+
+            System.out.println(firstElement);
+            idRepo.save(newspaperIdModel);
+        }
+    }
+
+    /**
      * Crawl all image urls to split on full newapaper id
      * @return Set of urls
      */
@@ -68,29 +92,5 @@ public class NewspaperIdCrawler {
             formattedStrings.add(lastElement);
         }
         return formattedStrings;
-    }
-
-    /**
-     * Save full newspaper id to database
-     */
-    //@PostConstruct
-    private void saveFullId() {
-        Set<String> formattedStrings = formatNewsPaperUrl();
-
-        for (String string : formattedStrings) {
-            String[] formatted = string.split("(\\d)");
-            String firstElement = formatted[0];
-
-            if(firstElement.charAt(firstElement.length() - 1) == '-') {
-                firstElement = firstElement.substring(0, firstElement.length() -1);
-                formatted[0] = firstElement;
-            }
-
-            NewspaperIdModel newspaperIdModel = new NewspaperIdModel();
-            newspaperIdModel.setName(firstElement);
-
-            System.out.println(firstElement);
-            idRepo.save(newspaperIdModel);
-        }
     }
 }

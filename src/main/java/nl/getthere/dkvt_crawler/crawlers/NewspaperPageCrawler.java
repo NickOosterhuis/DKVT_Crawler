@@ -34,6 +34,24 @@ public class NewspaperPageCrawler {
     private NewspaperFamAdvertIdRepo famAdvertIdRepo;
 
     /**
+     * Start crawling
+     */
+    @PostConstruct
+    private void crawl() {
+        setupDriver();
+        Set<String> urls = saveTempUrls();
+
+        //TODO date crawlen van krant if date krant =< date range krant dan skip krant?
+        //TODO ook 2 familiebericht pagina's mee nemen inpv stoppen zodra die fam berichten tegenkomen is
+
+        for(String url : urls) {
+            System.out.println("IK BEN HIER! " + url);
+            scanForFamAdverts(url);
+        }
+        quitDriver();
+    }
+
+    /**
      * Get all dates in between a certain range
      * @return List of local date objects
      */
@@ -69,17 +87,20 @@ public class NewspaperPageCrawler {
      *
      * @return List of urls
      */
-    private List<String> saveTempUrls() {
-        List<String> tempUrls = new ArrayList<>();
+    private Set<String> saveTempUrls() {
+        Set<String> tempUrls = new HashSet<>();
         List<NewspaperIdModel> newspaperIdModels = (List<NewspaperIdModel>) idRepo.findAll();
         List<String> dates = formatLocalDates();
 
         for (NewspaperIdModel model : newspaperIdModels) {
             String fullId = model.getName();
-
             for (String date : dates) {
                 String baseUrl = "https://www.dekrantvantoen.nl/vw/edition.do?dp=" + fullId + "&altd=true&date=" + date + "&ed=00&v2=true";
                 tempUrls.add(baseUrl);
+
+                if(date.equals(LocalDate.now().toString())) {
+                    driver.quit();
+                }
             }
         }
         return tempUrls;
@@ -113,13 +134,21 @@ public class NewspaperPageCrawler {
         setBaseUrl(currentUrl);
 
         List<WebElement> categories = driver.findElements(By.xpath("//a[contains(@href, 'javascript:showArticle')]"));
-        Set<WebElement> famAdverts = new HashSet<>();
+        Set<WebElement> famAdverts;
 
-        for (WebElement category : categories) {
-            if (category.getText().equals("Familieberichten")) {
-                famAdverts.add(category);
+        if (isFamPage(categories)) {
+            famAdverts = new HashSet<>(categories);
+            System.out.println(famAdverts);
+            saveFamAdvertId(famAdverts);
+
+            WebElement nextPage = flipPage();
+
+            if (nextPage != null) {
+                nextPage.click();
+                currentUrl = driver.getCurrentUrl();
+                scanForFamAdverts(currentUrl);
             }
-            else {
+        } else {
                 WebElement nextPage = flipPage();
 
                 if (nextPage != null) {
@@ -128,17 +157,25 @@ public class NewspaperPageCrawler {
                     scanForFamAdverts(currentUrl);
                 }
                 return;
+
+        }
+        //saveFamAdvertId(famAdverts);
+    }
+
+    private boolean isFamPage(List<WebElement> categories) {
+        for (WebElement category : categories) {
+            if (category.getText().equals("Familieberichten")) {
+                return true;
             }
         }
-        saveFamAdvertId(famAdverts);
+        return false;
     }
 
     /**\
      * Method to save the advertisements into the database
-     * @param famAdverts a set of webelements crawled form a certain page
+     * @param famAdverts a set of web elements crawled form a certain page
      */
     private void saveFamAdvertId(Set<WebElement> famAdverts) {
-
         for (WebElement famAdvert : famAdverts) {
             String href = famAdvert.getAttribute("href");
             System.out.println(href);
@@ -150,14 +187,25 @@ public class NewspaperPageCrawler {
 
             if(matcher.find()) {
                 String advertID = matcher.group(1);
-                String[] splittedAdvertId = advertID.split("-");
+                String[] splitAdvertId = advertID.split("-");
 
-                String abbriviation = splittedAdvertId[0];
-                String date = splittedAdvertId[1];
+                String abbreviation = splitAdvertId[0];
+                String date = splitAdvertId[1];
+                String id = splitAdvertId[2];
+
+                String[] numbers = id.split("");
+                String pageNumber = numbers[2] + numbers[3] + numbers[4];
+                String publicationNumber = numbers[0] + numbers[1];
+                String advertNumber = numbers[5] + numbers[6] + numbers[7];
+
+                //System.out.println("AD NUMBER" + advertNumber);
 
                 adModel.setName(advertID);
-                adModel.setNewspaperAbbriviation(abbriviation);
+                adModel.setNewspaperAbbreviation(abbreviation);
                 adModel.setDate(date);
+                adModel.setPageNumber(pageNumber);
+                adModel.setPublicationNumber(publicationNumber);
+                adModel.setAdvertNumber(advertNumber);
 
                 if(!isDuplicate(adModel))
                     famAdvertIdRepo.save(adModel);
@@ -179,19 +227,4 @@ public class NewspaperPageCrawler {
         }
         return false;
     }
-
-    @PostConstruct
-    private void crawl() {
-        setupDriver();
-        List<String> urls = saveTempUrls();
-
-        for(String url : urls) {
-            System.out.println("IK BEN HIER! " + url);
-            scanForFamAdverts(url);
-        }
-        quitDriver();
-    }
-
-
-
 }

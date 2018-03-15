@@ -16,7 +16,16 @@ public class NewspaperFamAdvertIdModel {
     private String date;
 
     @Column(nullable = false, name = "abbriviation")
-    private String newspaperAbbriviation;
+    private String newspaperAbbreviation;
+
+    @Column(nullable = false, name = "page_number")
+    private String pageNumber;
+
+    @Column(nullable = false, name = "publication_number")
+    private String publicationNumber;
+
+    @Column(nullable = false, name = "advert_number")
+    private String advertNumber;
 
     public long getId() {
         return id;
@@ -42,11 +51,35 @@ public class NewspaperFamAdvertIdModel {
         this.date = date;
     }
 
-    public String getNewspaperAbbriviation() {
-        return newspaperAbbriviation;
+    public String getNewspaperAbbreviation() {
+        return newspaperAbbreviation;
     }
 
-    public void setNewspaperAbbriviation(String newspaperAbbriviation) {
-        this.newspaperAbbriviation = newspaperAbbriviation;
+    public void setNewspaperAbbreviation(String newspaperAbbreviation) {
+        this.newspaperAbbreviation = newspaperAbbreviation;
+    }
+
+    public String getPageNumber() {
+        return pageNumber;
+    }
+
+    public void setPageNumber(String pageNumber) {
+        this.pageNumber = pageNumber;
+    }
+
+    public void setPublicationNumber(String publicationNumber) {
+        this.publicationNumber = publicationNumber;
+    }
+
+    public String getPublicationNumber() {
+        return publicationNumber;
+    }
+
+    public void setAdvertNumber(String advertNumber) {
+        this.advertNumber = advertNumber;
+    }
+
+    public String getAdvertNumber() {
+        return advertNumber;
     }
 }
