@@ -1,7 +1,7 @@
 package nl.getthere.dkvt_crawler.crawlers;
 
 import nl.getthere.dkvt_crawler.models.FamAdPageModel;
-import nl.getthere.dkvt_crawler.models.FullNewspaperIdMordel;
+import nl.getthere.dkvt_crawler.models.FullNewspaperIdModel;
 import nl.getthere.dkvt_crawler.reposiroties.FamPageRepository;
 import nl.getthere.dkvt_crawler.reposiroties.FullNewspaperIdRepository;
 import org.openqa.selenium.By;
@@ -90,10 +90,10 @@ public class NewspaperScanner {
      */
     private Set<String> saveTempUrls() {
         Set<String> tempUrls = new HashSet<>();
-        List<FullNewspaperIdMordel> newspaperIdModels = (List<FullNewspaperIdMordel>) idRepo.findAll();
+        List<FullNewspaperIdModel> newspaperIdModels = (List<FullNewspaperIdModel>) idRepo.findAll();
         List<String> dates = formatLocalDates();
 
-        for (FullNewspaperIdMordel model : newspaperIdModels) {
+        for (FullNewspaperIdModel model : newspaperIdModels) {
             String fullId = model.getName();
             for (String date : dates) {
                 String baseUrl = "https://www.dekrantvantoen.nl/vw/edition.do?dp=" + fullId + "&altd=true&date=" + date + "&ed=00&v2=true";
@@ -189,9 +189,9 @@ public class NewspaperScanner {
                 String publicationNumber = numbers[0] + numbers[1];
                 String advertNumber = numbers[5] + numbers[6] + numbers[7];
 
-                logger.info("FamAd: advert ID = " + advertID + " abbreviation = " + abbreviation + " date = " + date +
-                        " page number = " + pageNumber + " publication number = " + publicationNumber +
-                        " advert number = " + advertNumber);
+                logger.info("FamAd: advert ID = " + advertID + ", abbreviation = " + abbreviation + ", date = " + date +
+                        ", page number = " + pageNumber + ", publication number = " + publicationNumber +
+                        ", advert number = " + advertNumber);
 
                 adModel.setName(advertID);
                 adModel.setNewspaperAbbreviation(abbreviation);

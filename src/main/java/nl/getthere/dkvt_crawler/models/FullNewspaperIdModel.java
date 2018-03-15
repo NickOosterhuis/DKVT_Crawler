@@ -3,7 +3,7 @@ package nl.getthere.dkvt_crawler.models;
 import javax.persistence.*;
 
 @Entity(name = "NewspaperId")
-public class FullNewspaperIdMordel {
+public class FullNewspaperIdModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

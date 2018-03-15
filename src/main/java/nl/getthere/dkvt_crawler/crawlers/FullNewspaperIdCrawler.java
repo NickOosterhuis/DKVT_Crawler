@@ -2,7 +2,7 @@ package nl.getthere.dkvt_crawler.crawlers;
 
 
 import nl.getthere.dkvt_crawler.models.NewspaperAbbreviationModel;
-import nl.getthere.dkvt_crawler.models.FullNewspaperIdMordel;
+import nl.getthere.dkvt_crawler.models.FullNewspaperIdModel;
 import nl.getthere.dkvt_crawler.reposiroties.NewspaperAbbreviationRepository;
 import nl.getthere.dkvt_crawler.reposiroties.FullNewspaperIdRepository;
 import org.openqa.selenium.By;
@@ -46,7 +46,7 @@ public class FullNewspaperIdCrawler {
                 formatted[0] = firstElement;
             }
 
-            FullNewspaperIdMordel newspaperIdModel = new FullNewspaperIdMordel();
+            FullNewspaperIdModel newspaperIdModel = new FullNewspaperIdModel();
             newspaperIdModel.setName(firstElement);
 
             logger.info("Crawled newspaper is: " + firstElement);
