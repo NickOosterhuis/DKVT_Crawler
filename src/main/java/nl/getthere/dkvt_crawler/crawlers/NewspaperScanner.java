@@ -240,7 +240,7 @@ public class NewspaperScanner {
         int widthSize = Integer.parseInt(width.replaceAll("[^\\d.]", ""));
         int heightSize = Integer.parseInt(height.replaceAll("[^\\d.]", ""));
 
-        logger.info("Style: x coordinate = " + xCoordinate + ", y coordinate = " + yCoordinate + ", widht = " + width + ", height = " + height);
+        logger.info("Style: x coordinate = " + xCoordinate + ", y coordinate = " + yCoordinate + ", width = " + width + ", height = " + height);
 
         FamAdPropertyModel propertyModel = new FamAdPropertyModel(xCoordinate, yCoordinate, heightSize, widthSize);
         famAd.setFamAdPropertyModel(propertyModel);
