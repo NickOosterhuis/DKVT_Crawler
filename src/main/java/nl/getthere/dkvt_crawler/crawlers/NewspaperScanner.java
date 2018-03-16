@@ -1,6 +1,7 @@
 package nl.getthere.dkvt_crawler.crawlers;
 
 import nl.getthere.dkvt_crawler.models.FamAdPageModel;
+import nl.getthere.dkvt_crawler.models.FamAdPropertyModel;
 import nl.getthere.dkvt_crawler.models.FullNewspaperIdModel;
 import nl.getthere.dkvt_crawler.reposiroties.FamPageRepository;
 import nl.getthere.dkvt_crawler.reposiroties.FullNewspaperIdRepository;
@@ -170,13 +171,16 @@ public class NewspaperScanner {
 
         for (WebElement famAdvert : famAdverts) {
             String href = famAdvert.getAttribute("href");
+            String mouseOver = famAdvert.getAttribute("onmousemove");
 
             Pattern pattern = Pattern.compile("'(.*?)'");
             Matcher matcher = pattern.matcher(href);
+            Matcher matcherMouseElement = pattern.matcher(mouseOver);
 
             FamAdPageModel adModel = new FamAdPageModel();
 
-            if(matcher.find()) {
+            if(matcher.find() && matcherMouseElement.find()) {
+                //strip javascript function to click advert
                 String advertID = matcher.group(1);
                 String[] splitAdvertId = advertID.split("-");
 
@@ -189,9 +193,14 @@ public class NewspaperScanner {
                 String publicationNumber = numbers[0] + numbers[1];
                 String advertNumber = numbers[5] + numbers[6] + numbers[7];
 
+                //strip mouse over function
+                String column = matcherMouseElement.group(1);
+                String[] splitColumn = column.split("");
+                column = splitColumn[0] + splitColumn[1];
+
                 logger.info("FamAd: advert ID = " + advertID + ", abbreviation = " + abbreviation + ", date = " + date +
                         ", page number = " + pageNumber + ", publication number = " + publicationNumber +
-                        ", advert number = " + advertNumber);
+                        ", advert number = " + advertNumber + ", Column = " + column);
 
                 adModel.setName(advertID);
                 adModel.setNewspaperAbbreviation(abbreviation);
@@ -199,6 +208,9 @@ public class NewspaperScanner {
                 adModel.setPageNumber(pageNumber);
                 adModel.setPublicationNumber(publicationNumber);
                 adModel.setAdvertNumber(advertNumber);
+                adModel.setColumnId(column);
+
+                coupleFamAdProperties(adModel);
 
                 if(!isDuplicate(adModel)) {
                     logger.info("FamAd: Model is saved in DB");
@@ -207,6 +219,31 @@ public class NewspaperScanner {
                 logger.info("FamAd: Model already exists in DB");
             }
         }
+    }
+
+    private void coupleFamAdProperties(FamAdPageModel famAd) {
+
+        //Get x, y coordinates and width and height of an advertisement
+        WebElement columnId = driver.findElement(By.id(famAd.getColumnId()));
+        WebElement nestedElement = columnId.findElement(By.id("f0"));
+        String style = nestedElement.getAttribute("style");
+
+        String[] split = style.split(";");
+
+        String x = split[1];
+        String y = split[2];
+        String width = split[3];
+        String height = split[4];
+
+        int xCoordinate = Integer.parseInt(x.replaceAll("[^\\d.]", ""));
+        int yCoordinate = Integer.parseInt(y.replaceAll("[^\\d.]", ""));
+        int widthSize = Integer.parseInt(width.replaceAll("[^\\d.]", ""));
+        int heightSize = Integer.parseInt(height.replaceAll("[^\\d.]", ""));
+
+        logger.info("Style: x coordinate = " + xCoordinate + ", y coordinate = " + yCoordinate + ", widht = " + width + ", height = " + height);
+
+        FamAdPropertyModel propertyModel = new FamAdPropertyModel(xCoordinate, yCoordinate, heightSize, widthSize);
+        famAd.setFamAdPropertyModel(propertyModel);
     }
 
     /**

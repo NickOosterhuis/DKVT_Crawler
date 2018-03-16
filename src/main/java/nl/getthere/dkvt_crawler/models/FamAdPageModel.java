@@ -27,6 +27,29 @@ public class FamAdPageModel {
     @Column(nullable = false, name = "advert_number")
     private String advertNumber;
 
+    @Column(nullable = false, name = "column_id")
+    private String columnId;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="FamAdProperties")
+    private FamAdPropertyModel famAdPropertyModel;
+
+    public FamAdPropertyModel getFamAdPropertyModel() {
+        return famAdPropertyModel;
+    }
+
+    public void setFamAdPropertyModel(FamAdPropertyModel famAdPropertyModel) {
+        this.famAdPropertyModel = famAdPropertyModel;
+    }
+
+    public String getColumnId() {
+        return columnId;
+    }
+
+    public void setColumnId(String columnId) {
+        this.columnId = columnId;
+    }
+
     public long getId() {
         return id;
     }
