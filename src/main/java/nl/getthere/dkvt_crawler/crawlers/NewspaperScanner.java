@@ -41,7 +41,7 @@ public class NewspaperScanner {
     /**
      * Start crawling
      */
-    @PostConstruct
+    //@PostConstruct
     private void crawl() {
         setupDriver();
         Set<String> urls = saveTempUrls();

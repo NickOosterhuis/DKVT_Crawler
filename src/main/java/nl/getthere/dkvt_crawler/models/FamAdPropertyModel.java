@@ -21,6 +21,10 @@ public class FamAdPropertyModel {
     @Column(nullable = false)
     private int width;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="FamAdImages")
+    private ImageModel image;
+
     public FamAdPropertyModel() {};
 
     public FamAdPropertyModel(int x, int y, int height, int width) {
@@ -28,6 +32,14 @@ public class FamAdPropertyModel {
         this.y = y;
         this.height = height;
         this.width = width;
+    }
+
+    public ImageModel getImage() {
+        return image;
+    }
+
+    public void setImage(ImageModel image) {
+        this.image = image;
     }
 
     public long getId() {

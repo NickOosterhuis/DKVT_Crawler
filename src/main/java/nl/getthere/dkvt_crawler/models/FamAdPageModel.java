@@ -2,7 +2,7 @@ package nl.getthere.dkvt_crawler.models;
 
 import javax.persistence.*;
 
-@Entity(name = "FamAdvertId")
+@Entity(name = "FamAds")
 public class FamAdPageModel {
 
     @Id
