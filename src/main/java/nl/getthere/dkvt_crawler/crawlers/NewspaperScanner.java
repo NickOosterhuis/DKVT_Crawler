@@ -41,7 +41,7 @@ public class NewspaperScanner {
     /**
      * Start crawling
      */
-    //@PostConstruct
+    @PostConstruct
     private void crawl() {
         setupDriver();
         Set<String> urls = saveTempUrls();
@@ -215,7 +215,7 @@ public class NewspaperScanner {
                 if(!isDuplicate(adModel)) {
                     logger.info("FamAd: Model is saved in DB");
                     famAdvertIdRepo.save(adModel);
-                }
+                } else
                 logger.info("FamAd: Model already exists in DB");
             }
         }

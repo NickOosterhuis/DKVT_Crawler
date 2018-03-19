@@ -6,7 +6,7 @@ import javax.persistence.*;
 public class FamAdPageModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "fam_advert_code", nullable = false, unique = true)

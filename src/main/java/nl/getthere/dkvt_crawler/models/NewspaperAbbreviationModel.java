@@ -6,7 +6,7 @@ import java.util.Date;
 @Entity(name = "Abbreviations")
 public class NewspaperAbbreviationModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "newspaper_abbreviation", unique = true, nullable = false)
