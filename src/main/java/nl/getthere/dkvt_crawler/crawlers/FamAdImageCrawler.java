@@ -20,6 +20,9 @@ import java.util.List;
 
 import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
 
+/**
+ * @author Nick Oosterhuis
+ */
 @Component
 @Order(4)
 public class FamAdImageCrawler {
