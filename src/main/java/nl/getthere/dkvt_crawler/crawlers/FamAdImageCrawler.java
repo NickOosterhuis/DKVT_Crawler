@@ -53,6 +53,10 @@ public class FamAdImageCrawler {
             imageModel.setUrl(imgLink);
             famAd.getFamAdPropertyModel().setImage(imageModel);
 
+//            logger.info("Image saved: fam ad =  " + famAd.getName() + ", with url = " + famAd.getFamAdPropertyModel().getImage().getUrl());
+//            downloadImage(imgLink, famAd.getName());
+//            famPageRepo.save(famAd);
+
             if(!isDuplicate(famAd)) {
                 logger.info("Image saved: fam ad =  " + famAd.getName() + ", with url = " + famAd.getFamAdPropertyModel().getImage().getUrl());
                 downloadImage(imgLink, famAd.getName());
@@ -106,7 +110,7 @@ public class FamAdImageCrawler {
         List<FamAdPageModel> models = (List<FamAdPageModel>) famPageRepo.findAll();
 
         for(FamAdPageModel c : models) {
-            if(model.getFamAdPropertyModel().getImage().getUrl().equals(c.getFamAdPropertyModel().getImage().getUrl()))
+            if(model.getFamAdPropertyModel().getImage().equals(c.getFamAdPropertyModel().getImage()))
                 return true;
         }
         return false;
