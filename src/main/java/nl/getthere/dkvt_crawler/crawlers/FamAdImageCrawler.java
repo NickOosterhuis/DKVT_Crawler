@@ -32,7 +32,7 @@ public class FamAdImageCrawler {
     /**
      * Crawler method for getting the fam ads JPG url's
      */
-    //@PostConstruct
+    @PostConstruct
     private void crawl() {
         setupDriver();
 
@@ -106,7 +106,7 @@ public class FamAdImageCrawler {
         List<FamAdPageModel> models = (List<FamAdPageModel>) famPageRepo.findAll();
 
         for(FamAdPageModel c : models) {
-            if(model.getName().equals(c.getName()))
+            if(model.getFamAdPropertyModel().getImage().getUrl().equals(c.getFamAdPropertyModel().getImage().getUrl()))
                 return true;
         }
         return false;
