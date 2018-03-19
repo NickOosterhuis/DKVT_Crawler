@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author Nick Oosterhuis
+ */
 public class NewspapersToDelete {
 
     private static final String ANB = "AMB";

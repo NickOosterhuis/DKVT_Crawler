@@ -26,6 +26,9 @@ import java.util.stream.IntStream;
 
 import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
 
+/**
+ * @author Nick Oosterhuis
+ */
 @Component
 @Order(3)
 public class NewspaperScanner {

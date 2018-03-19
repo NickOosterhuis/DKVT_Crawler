@@ -3,6 +3,9 @@ package nl.getthere.dkvt_crawler.crawlers;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+/**
+ * @author Nick Oosterhuis
+ */
 public class WebCrawlerConfig {
 
     public static WebDriver driver;

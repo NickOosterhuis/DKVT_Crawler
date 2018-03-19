@@ -2,6 +2,9 @@ package nl.getthere.dkvt_crawler.models;
 
 import javax.persistence.*;
 
+/**
+ * @author Nick Oosterhuis
+ */
 @Entity(name = "NewspaperId")
 public class FullNewspaperIdModel {
     @Id

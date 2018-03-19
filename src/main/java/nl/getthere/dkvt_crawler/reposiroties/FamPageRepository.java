@@ -5,5 +5,8 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Set;
 
+/**
+ * @author Nick Oosterhuis
+ */
 public interface FamPageRepository extends CrudRepository<FamAdPageModel, Long> {
 }
