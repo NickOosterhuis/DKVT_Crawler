@@ -61,8 +61,10 @@ public class NewspaperScanner {
      * @return List of local date objects
      */
     private List<LocalDate> getDatesInRange() {
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = LocalDate.of(2018, Month.MARCH, 1);
+        //LocalDate endDate = LocalDate.now();
+        LocalDate endDate = LocalDate.of(2018, Month.FEBRUARY, 12);
+
+        LocalDate startDate = LocalDate.of(2018, Month.FEBRUARY, 11);
 
         long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate);
         return IntStream.iterate(0, i -> i + 1)

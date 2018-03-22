@@ -32,6 +32,8 @@ public class FamAdImageCrawler {
 
     private static final Logger logger = LoggerFactory.getLogger(FamAdImageCrawler.class);
 
+    private final int SCALE_FACTOR = 3;
+
     /**
      * Crawler method for getting the fam ads JPG url's
      */
@@ -39,7 +41,9 @@ public class FamAdImageCrawler {
     private void crawl() {
         setupDriver();
 
-        List<FamAdPageModel> famAds = (List<FamAdPageModel>) famPageRepo.findAll();
+        //List<FamAdPageModel> famAds = (List<FamAdPageModel>) famPageRepo.findAll();
+
+        List<FamAdPageModel> famAds = famPageRepo.findAllByNewspaperAbbreviation("OSA");
 
         for(FamAdPageModel famAd : famAds) {
 
@@ -55,10 +59,6 @@ public class FamAdImageCrawler {
 
             imageModel.setUrl(imgLink);
             famAd.getFamAdPropertyModel().setImage(imageModel);
-
-//            logger.info("Image saved: fam ad =  " + famAd.getName() + ", with url = " + famAd.getFamAdPropertyModel().getImage().getUrl());
-//            downloadImage(imgLink, famAd.getName());
-//            famPageRepo.save(famAd);
 
             if(!isDuplicate(famAd)) {
                 logger.info("Image saved: fam ad =  " + famAd.getName() + ", with url = " + famAd.getFamAdPropertyModel().getImage().getUrl());
@@ -94,9 +94,11 @@ public class FamAdImageCrawler {
 
         try{
             URL img = new URL(imgLink);
-            BufferedImage saveImage = ImageIO.read(img);
+            BufferedImage crawledImage = ImageIO.read(img);
 
-            ImageIO.write(saveImage, "jpg", new File("D:\\DKVT_IMGS\\" + name + ".jpg"));
+            BufferedImage croppedImage = cropImage(crawledImage, name);
+
+            ImageIO.write(croppedImage, "jpg", new File("D:\\steenwijker\\" + name + ".jpg"));
             logger.info("DOWNLOAD: Download completed image url = " + imgLink + ", Image Name = " + name);
 
         } catch (Exception e) {
@@ -117,5 +119,24 @@ public class FamAdImageCrawler {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Method to crop the images to their height and width from a constant starting point
+     *
+     * @param img a crawled img which needs to be cropped
+     */
+    private BufferedImage cropImage(BufferedImage img, String name) {
+
+        List<FamAdPageModel> famAdPageModels = famPageRepo.findAllByName(name);
+
+        for (FamAdPageModel model : famAdPageModels) {
+            int width = model.getFamAdPropertyModel().getWidth();
+            int height = model.getFamAdPropertyModel().getHeight();
+
+            img = img.getSubimage(33,45, (width*SCALE_FACTOR) - 22, (height*SCALE_FACTOR) - 17);
+
+        }
+        return img;
     }
 }
