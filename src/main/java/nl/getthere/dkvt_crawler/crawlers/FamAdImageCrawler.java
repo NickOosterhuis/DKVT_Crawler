@@ -134,8 +134,8 @@ public class FamAdImageCrawler {
             int width = model.getFamAdPropertyModel().getWidth();
             int height = model.getFamAdPropertyModel().getHeight();
 
-            img = img.getSubimage(33,45, (width*SCALE_FACTOR) - 22, (height*SCALE_FACTOR) - 17);
-
+            logger.info("CROPPING: Image cropped!");
+            img = img.getSubimage(32,45, (width*SCALE_FACTOR) - 22, (height*SCALE_FACTOR) - 17);
         }
         return img;
     }
