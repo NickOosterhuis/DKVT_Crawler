@@ -3,8 +3,8 @@ package nl.getthere.dkvt_crawler.crawlers;
 import nl.getthere.dkvt_crawler.models.FamAdPageModel;
 import nl.getthere.dkvt_crawler.models.FamAdPropertyModel;
 import nl.getthere.dkvt_crawler.models.FullNewspaperIdModel;
-import nl.getthere.dkvt_crawler.reposiroties.FamPageRepository;
-import nl.getthere.dkvt_crawler.reposiroties.FullNewspaperIdRepository;
+import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
+import nl.getthere.dkvt_crawler.repositories.FullNewspaperIdRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -37,15 +36,14 @@ public class NewspaperScanner {
     private FullNewspaperIdRepository idRepo;
 
     @Autowired
-    private FamPageRepository famAdvertIdRepo;
+    private FamAdRepository famAdvertIdRepo;
 
     private static final Logger logger = LoggerFactory.getLogger(NewspaperScanner.class);
 
     /**
      * Start crawling
      */
-    //@PostConstruct
-    private void crawl() {
+    public void crawl() {
         setupDriver();
         Set<String> urls = saveTempUrls();
 
@@ -62,12 +60,12 @@ public class NewspaperScanner {
      */
     private List<LocalDate> getDatesInRange() {
         //LocalDate endDate = LocalDate.now();
-        LocalDate endDate = LocalDate.of(2018, Month.FEBRUARY, 12);
+        LocalDate endDate = LocalDate.of(2017, Month.DECEMBER, 31);
 
-        LocalDate startDate = LocalDate.of(2018, Month.FEBRUARY, 11);
+        LocalDate startDate = LocalDate.of(2017, Month.JANUARY, 1);
 
         long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate);
-        return IntStream.iterate(0, i -> i + 1)
+        return IntStream.iterate(0, i -> i + 7)
                 .limit(numOfDaysBetween)
                 .mapToObj(startDate::plusDays)
                 .collect(Collectors.toList());
@@ -96,7 +94,17 @@ public class NewspaperScanner {
      */
     private Set<String> saveTempUrls() {
         Set<String> tempUrls = new HashSet<>();
-        List<FullNewspaperIdModel> newspaperIdModels = (List<FullNewspaperIdModel>) idRepo.findAll();
+
+        FullNewspaperIdModel kanaalstreek = idRepo.findByName("KSK");
+        FullNewspaperIdModel bolswarder = idRepo.findByName("BNH");
+        FullNewspaperIdModel eemsbode = idRepo.findByName("EMS");
+
+        List<FullNewspaperIdModel> newspaperIdModels = new ArrayList<>();
+
+        newspaperIdModels.add(kanaalstreek);
+        newspaperIdModels.add(bolswarder);
+        newspaperIdModels.add(eemsbode);
+
         List<String> dates = formatLocalDates();
 
         for (FullNewspaperIdModel model : newspaperIdModels) {
@@ -271,7 +279,7 @@ public class NewspaperScanner {
      * @return boolean
      */
     private boolean isDuplicate(FamAdPageModel model) {
-        List<FamAdPageModel> models = (List<FamAdPageModel>) famAdvertIdRepo.findAll();
+        List<FamAdPageModel> models = famAdvertIdRepo.findAll();
 
         for(FamAdPageModel c : models) {
             if(model.getName().equals(c.getName()))

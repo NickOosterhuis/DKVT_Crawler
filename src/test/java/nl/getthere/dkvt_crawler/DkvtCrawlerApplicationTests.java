@@ -1,4 +1,4 @@
-package n.getthere.dkvt_crawler;
+package nl.getthere.dkvt_crawler;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

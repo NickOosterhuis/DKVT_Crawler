@@ -1,7 +1,7 @@
 package nl.getthere.dkvt_crawler.crawlers;
 
 import nl.getthere.dkvt_crawler.models.NewspaperAbbreviationModel;
-import nl.getthere.dkvt_crawler.reposiroties.NewspaperAbbreviationRepository;
+import nl.getthere.dkvt_crawler.repositories.NewspaperAbbreviationRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -32,8 +32,7 @@ public class NewspaperAbbreviationCrawler {
      * Method to crawl the dropdown menu of newspapers
      * @return List of Newspaper types
      */
-    //@PostConstruct
-    public void crawlAbbreviations() {
+    public void crawl() {
         setupDriver();
         String url = "https://www.dekrantvantoen.nl/vw/edition.do?dp=NVHN&altd=true&date=20180207&ed=00&v2=true";
         setBaseUrl(url);
@@ -74,7 +73,7 @@ public class NewspaperAbbreviationCrawler {
      * @return boolean
      */
     private boolean isDuplicate(NewspaperAbbreviationModel model) {
-        List<NewspaperAbbreviationModel> models = (List<NewspaperAbbreviationModel>) repo.findAll();
+        List<NewspaperAbbreviationModel> models = repo.findAll();
 
         for(NewspaperAbbreviationModel c : models) {
             if(model.getNewspaperName().equals(c.getNewspaperName()))

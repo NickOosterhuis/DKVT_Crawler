@@ -2,7 +2,7 @@ package nl.getthere.dkvt_crawler.crawlers;
 
 import nl.getthere.dkvt_crawler.models.FamAdPageModel;
 import nl.getthere.dkvt_crawler.models.ImageModel;
-import nl.getthere.dkvt_crawler.reposiroties.FamPageRepository;
+import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -28,7 +27,7 @@ import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
 public class FamAdImageCrawler {
 
     @Autowired
-    FamPageRepository famPageRepo;
+    FamAdRepository famPageRepo;
 
     private static final Logger logger = LoggerFactory.getLogger(FamAdImageCrawler.class);
 
@@ -37,13 +36,10 @@ public class FamAdImageCrawler {
     /**
      * Crawler method for getting the fam ads JPG url's
      */
-    @PostConstruct
-    private void crawl() {
+    public void crawl() {
         setupDriver();
 
-        //List<FamAdPageModel> famAds = (List<FamAdPageModel>) famPageRepo.findAll();
-
-        List<FamAdPageModel> famAds = famPageRepo.findAllByNewspaperAbbreviation("OSA");
+        List<FamAdPageModel> famAds = famPageRepo.findAll();
 
         for(FamAdPageModel famAd : famAds) {
 
@@ -62,7 +58,7 @@ public class FamAdImageCrawler {
 
             if(!isDuplicate(famAd)) {
                 logger.info("Image saved: fam ad =  " + famAd.getName() + ", with url = " + famAd.getFamAdPropertyModel().getImage().getUrl());
-                downloadImage(imgLink, famAd.getName());
+                downloadImage(famAd);
                 famPageRepo.save(famAd);
             }
             logger.info("DB: Image " + famAd.getName() + " already exists in database.");
@@ -87,10 +83,15 @@ public class FamAdImageCrawler {
     /**
      * Download the images to a specific folder on the computer
      *
-     * @param imgLink url of the image
-     * @param name of the advertisement
+     * @param famAd model
      */
-    private void downloadImage(String imgLink, String name) {
+    private void downloadImage(FamAdPageModel famAd) {
+
+        String imgLink = famAd.getFamAdPropertyModel().getImage().getUrl();
+        String name = famAd.getName();
+        String abbreviation = famAd.getNewspaperAbbreviation();
+        String pageNumber = famAd.getPageNumber();
+        String date = famAd.getDate();
 
         try{
             URL img = new URL(imgLink);
@@ -98,8 +99,14 @@ public class FamAdImageCrawler {
 
             BufferedImage croppedImage = cropImage(crawledImage, name);
 
-            ImageIO.write(croppedImage, "jpg", new File("D:\\steenwijker\\" + name + ".jpg"));
+            File dir = new File("D:\\DKVT_IMGS\\" + abbreviation + "\\" + date +  "\\" + pageNumber);
+
+            if(!dir.exists())
+                dir.mkdirs();
+
+            ImageIO.write(croppedImage, "jpg", new File(dir + "\\" + name + ".jpg"));
             logger.info("DOWNLOAD: Download completed image url = " + imgLink + ", Image Name = " + name);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,7 +119,7 @@ public class FamAdImageCrawler {
      * @return boolean
      */
     private boolean isDuplicate(FamAdPageModel model) {
-        List<FamAdPageModel> models = (List<FamAdPageModel>) famPageRepo.findAll();
+        List<FamAdPageModel> models = famPageRepo.findAll();
 
         for(FamAdPageModel c : models) {
             if(model.getFamAdPropertyModel().getImage().equals(c.getFamAdPropertyModel().getImage()))

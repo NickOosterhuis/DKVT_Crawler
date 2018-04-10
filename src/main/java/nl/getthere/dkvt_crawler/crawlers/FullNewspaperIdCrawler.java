@@ -3,8 +3,8 @@ package nl.getthere.dkvt_crawler.crawlers;
 
 import nl.getthere.dkvt_crawler.models.NewspaperAbbreviationModel;
 import nl.getthere.dkvt_crawler.models.FullNewspaperIdModel;
-import nl.getthere.dkvt_crawler.reposiroties.NewspaperAbbreviationRepository;
-import nl.getthere.dkvt_crawler.reposiroties.FullNewspaperIdRepository;
+import nl.getthere.dkvt_crawler.repositories.NewspaperAbbreviationRepository;
+import nl.getthere.dkvt_crawler.repositories.FullNewspaperIdRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 
@@ -37,8 +36,7 @@ public class FullNewspaperIdCrawler {
     /**
      * Save full newspaper id to database
      */
-    //@PostConstruct
-    private void saveFullId() {
+    public void crawl() {
         Set<String> formattedStrings = formatNewsPaperUrl();
 
         for (String string : formattedStrings) {
@@ -64,7 +62,7 @@ public class FullNewspaperIdCrawler {
      */
     private Set<String> crawlNextUrl() {
 
-        List<NewspaperAbbreviationModel> abbreviations = (List<NewspaperAbbreviationModel>) abbreviationRepo.findAll();
+        List<NewspaperAbbreviationModel> abbreviations = abbreviationRepo.findAll();
         Set<String> urls = new HashSet<>();
 
         setupDriver();
