@@ -1,9 +1,10 @@
 package nl.getthere;
 
-import nl.getthere.dkvt_crawler.crawlers.FamAdImageCrawler;
-import nl.getthere.dkvt_crawler.crawlers.FullNewspaperIdCrawler;
-import nl.getthere.dkvt_crawler.crawlers.NewspaperAbbreviationCrawler;
-import nl.getthere.dkvt_crawler.crawlers.NewspaperScanner;
+import nl.getthere.dkvt_crawler.crawlers.*;
+import nl.getthere.imageprocessing.matching.OpenCvTest;
+import nl.getthere.imageprocessing.matching.OpenCvTest2;
+import nl.getthere.imageprocessing.matching.RGBMatchingAlgorithm;
+import nl.getthere.mapstructure.PdfToImg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
@@ -24,10 +25,25 @@ public class Application {
 	private FullNewspaperIdCrawler newspaperIdCrawler;
 
 	@Autowired
-	private NewspaperScanner newspaperScanner;
+	private FamAdImageCrawler famAdImageCrawler;
 
 	@Autowired
-	private FamAdImageCrawler famAdImageCrawler;
+    private FamAdCrawler famAdCrawler;
+
+	@Autowired
+	private LeftOverFamAdCrawler leftOverAdCrawler;
+
+	@Autowired
+    private PdfToImg pdfToImg;
+
+	@Autowired
+    private RGBMatchingAlgorithm rgbMatchingAlgorithm;
+
+	@Autowired
+	private OpenCvTest openCvTest;
+
+	@Autowired
+	private OpenCvTest2 openCvTest2;
 
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(Application.class);
@@ -40,9 +56,37 @@ public class Application {
 		return (args) -> {
 			//abbreviationCrawler.crawl();
 			//newspaperIdCrawler.crawl();
-			newspaperScanner.crawl();
-			//famAdImageCrawler.crawl();
+            //famAdCrawler.crawl();
+			//leftOverAdCrawler.crawl();
+			famAdImageCrawler.crawl();
 		};
-
 	}
+
+//	@Bean
+//    public CommandLineRunner createMapStructure() {
+//	    return(args) -> {
+//              pdfToImg.makeMapStructure();
+//        };
+//    }
+
+//    @Bean
+//    public CommandLineRunner bruteForceMatching() {
+//	    return(args) -> {
+//			rgbMatchingAlgorithm.match();
+//        };
+//    }
+
+//	@Bean
+//	public CommandLineRunner openCvMatching() {
+//		return(args) -> {
+//			openCvTest.match();
+//		};
+//	}
+
+//	@Bean
+//	public CommandLineRunner openCvMatching1() {
+//		return(args) -> {
+//			openCvTest2.match();
+//		};
+//	}
 }

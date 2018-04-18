@@ -2,9 +2,9 @@ package nl.getthere.dkvt_crawler.crawlers;
 
 import nl.getthere.dkvt_crawler.models.FamAdPageModel;
 import nl.getthere.dkvt_crawler.models.FamAdPropertyModel;
-import nl.getthere.dkvt_crawler.models.FullNewspaperIdModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
-import nl.getthere.dkvt_crawler.repositories.FullNewspaperIdRepository;
+import nl.getthere.imageprocessing.models.NDCModel;
+import nl.getthere.imageprocessing.repositories.NDCRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -13,15 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
 
@@ -30,102 +28,119 @@ import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
  */
 @Component
 @Order(3)
-public class NewspaperScanner {
+public class FamAdCrawler {
 
     @Autowired
-    private FullNewspaperIdRepository idRepo;
+    private NDCRepository ndcRepository;
 
     @Autowired
-    private FamAdRepository famAdvertIdRepo;
+    private FamAdRepository famAdRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(NewspaperScanner.class);
+    private static final Logger logger = LoggerFactory.getLogger(FamAdCrawler.class);
 
-    /**
-     * Start crawling
-     */
     public void crawl() {
+        Set<String> baseUrls = getBaseUrls();
         setupDriver();
-        Set<String> urls = saveTempUrls();
 
-        for(String url : urls) {
-            logger.info("Run method again on url: " + url);
-            scanForFamAdverts(url);
+        for(String url : baseUrls) {
+            String[] urlParts = url.split("@");
+            String pageNumber = urlParts[1];
+            url = urlParts[0];
+
+            String nextPage = flipPageAndReturnUrl(url);
+
+            if(nextPage!=null) {
+                String id[] = getIdArray(nextPage);
+                String nextUrl = formatNextUrl(id, pageNumber);
+                scanForFamAdverts(nextUrl);
+            }
+            logger.error("There is no url to crawl!");
         }
         quitDriver();
     }
 
     /**
-     * Get all dates in between a certain range
-     * @return List of local date objects
-     */
-    private List<LocalDate> getDatesInRange() {
-        //LocalDate endDate = LocalDate.now();
-        LocalDate endDate = LocalDate.of(2017, Month.DECEMBER, 31);
-
-        LocalDate startDate = LocalDate.of(2017, Month.JANUARY, 1);
-
-        long numOfDaysBetween = ChronoUnit.DAYS.between(startDate, endDate);
-        return IntStream.iterate(0, i -> i + 7)
-                .limit(numOfDaysBetween)
-                .mapToObj(startDate::plusDays)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Format List of LocalDates to use for the parameterized base url
-     * @return List of formatted dates
-     */
-    private List<String> formatLocalDates() {
-        List<LocalDate> dates = getDatesInRange();
-        List<String> convertedDates = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYYMMdd");
-
-        for(LocalDate date : dates) {
-            String convertedDate = date.format(formatter);
-            convertedDates.add(convertedDate);
-        }
-        return convertedDates;
-    }
-
-    /**
-     * Temporarily save the url's of all newspapers
+     * Gathers the base urls needed to crawl the website
      *
-     * @return List of urls
+     * @return Set of Strings
      */
-    private Set<String> saveTempUrls() {
-        Set<String> tempUrls = new HashSet<>();
+    private Set<String> getBaseUrls() {
+        Set<String> urls = new HashSet<>();
+        List<NDCModel> ndcModels = ndcRepository.findAll();
+        Format formatter = new SimpleDateFormat("YYYMMdd");
 
-        FullNewspaperIdModel kanaalstreek = idRepo.findByName("KSK");
-        FullNewspaperIdModel bolswarder = idRepo.findByName("BNH");
-        FullNewspaperIdModel eemsbode = idRepo.findByName("EMS");
+        for(NDCModel ndcModel : ndcModels) {
+            String ndcAbbreviation = ndcModel.getEditionCode();
+            String ndcPublicationDate = formatter.format(ndcModel.getPublicationDate());
+            int ndcPageNumber = ndcModel.getPlacedOnPage();
+            String pageNumberString  = String.format("%03d", ndcPageNumber);
 
-        List<FullNewspaperIdModel> newspaperIdModels = new ArrayList<>();
+            ndcAbbreviation = formatAbbreviations(ndcAbbreviation);
 
-        newspaperIdModels.add(kanaalstreek);
-        newspaperIdModels.add(bolswarder);
-        newspaperIdModels.add(eemsbode);
-
-        List<String> dates = formatLocalDates();
-
-        for (FullNewspaperIdModel model : newspaperIdModels) {
-            String fullId = model.getName();
-            for (String date : dates) {
-                String baseUrl = "https://www.dekrantvantoen.nl/vw/edition.do?dp=" + fullId + "&altd=true&date=" + date + "&ed=00&v2=true";
-                tempUrls.add(baseUrl);
-
-                if(date.equals(LocalDate.now().toString())) {
-                    driver.quit();
-                }
-            }
+            String url = "https://www.dekrantvantoen.nl/vw/edition.do?dp=" + ndcAbbreviation + "&altd=true&date=" + ndcPublicationDate + "&ed=00&v2=true@" + pageNumberString;
+            urls.add(url);
         }
-        return tempUrls;
+        return urls;
+    }
+
+    /**
+     * Because the url to navigate through the newspaper is different, we need to flip one page, get the url and modify it
+     *
+     * @param id an array of the full abbreviation id
+     * @return the next url to crawl
+     */
+    private String formatNextUrl(String[] id, String pageNumber) {
+        System.out.println(pageNumber);
+
+        String url = "https://www.dekrantvantoen.nl/vw/page.do?id=" + id[0] +
+                    "-" + id[1] + "-" +
+                    pageNumber + "-" +
+                    id[3] + "&ed=00&v2=true";
+
+        return url;
+    }
+
+    /**
+     * Method to split the next url
+     *
+     * @param nextUrl string of the next url to crawl
+     * @return array of the chopped url
+     */
+    private String[] getIdArray(String nextUrl) {
+        String[] splittedUrl = nextUrl.split("&");
+        String[] idSplit = splittedUrl[0].split("=");
+
+        return idSplit[1].split("-");
+    }
+
+    /**
+     * Method to convert the new abbreviation of the ndc database to the old abbreviation of the crawled database
+     *
+     * @param ndcAbbreviation new abbreviation
+     * @return String of the old abbreviation
+     */
+    public String formatAbbreviations (String ndcAbbreviation) {
+        switch (ndcAbbreviation) {
+            case "GKA":
+                ndcAbbreviation = "KSK";
+                break;
+            case "FBN":
+                ndcAbbreviation = "BNH";
+                break;
+            default:
+                ndcAbbreviation = "EMS";
+                break;
+        }
+        return  ndcAbbreviation;
     }
 
     /**
      * Flip the page of the newspaper
      * @return webelement of the "Volgende" navigation button
      */
-    private WebElement flipPage() {
+    private String flipPageAndReturnUrl(String url) {
+        setBaseUrl(url);
+
         boolean isPresent = driver.findElements(By.xpath("//a[contains(@href, '/vw/page.do')]")).size() > 0;
         logger.info("Pagination: next button on page is found = " + isPresent);
 
@@ -133,8 +148,10 @@ public class NewspaperScanner {
             List<WebElement> navigationButtons = driver.findElements((By.xpath("//a[contains(@href, '/vw/page.do')]")));
 
             for(WebElement button : navigationButtons) {
-                if (button.getText().equals("Volgende"))
-                    return button;
+                if (button.getText().equals("Volgende")) {
+                    button.click();
+                    return driver.getCurrentUrl();
+                }
             }
         }
         return null;
@@ -144,10 +161,9 @@ public class NewspaperScanner {
      * Recursive function to scan for family advertisements and navigate through newspaper
      * @param url of the page needed to scan
      */
-    private void scanForFamAdverts(String url) {
-        String currentUrl = url;
-        logger.info("SCAN: URL to crawl =" + currentUrl);
-        setBaseUrl(currentUrl);
+    public void scanForFamAdverts(String url) {
+        logger.info("SCAN: URL to crawl =" + url);
+        setBaseUrl(url);
 
         List<WebElement> categories = driver.findElements(By.xpath("//a[contains(@href, 'javascript:showArticle')]"));
         Set<WebElement> famAdverts;
@@ -155,23 +171,6 @@ public class NewspaperScanner {
         if (isFamPage(categories)) {
             famAdverts = new HashSet<>(categories);
             saveFamAdvertId(famAdverts);
-
-            WebElement nextPage = flipPage();
-            if (nextPage != null) {
-                nextPage.click();
-                currentUrl = driver.getCurrentUrl();
-                scanForFamAdverts(currentUrl);
-            }
-        } else {
-            logger.info("Flip Page: No Fam Adverts found on page: " + url);
-            WebElement nextPage = flipPage();
-
-            if (nextPage != null) {
-                nextPage.click();
-                currentUrl = driver.getCurrentUrl();
-                scanForFamAdverts(currentUrl);
-            }
-            return;
         }
     }
 
@@ -179,7 +178,7 @@ public class NewspaperScanner {
      * Method to save the advertisements into the database
      * @param famAdverts a set of web elements crawled form a certain page
      */
-    private void saveFamAdvertId(Set<WebElement> famAdverts) {
+    public void saveFamAdvertId(Set<WebElement> famAdverts) {
         logger.info("FamAd: Crawler found = " + famAdverts.size() + " advertisements on page");
 
         for (WebElement famAdvert : famAdverts) {
@@ -199,6 +198,11 @@ public class NewspaperScanner {
 
                 String abbreviation = splitAdvertId[0];
                 String date = splitAdvertId[1];
+
+                if(date.equals("20171228")) {
+                    date = "20171227";
+                }
+
                 String id = splitAdvertId[2];
 
                 String[] numbers = id.split("");
@@ -223,19 +227,35 @@ public class NewspaperScanner {
                 adModel.setAdvertNumber(advertNumber);
                 adModel.setColumnId(column);
 
+                switch (abbreviation) {
+                    case "KSK":
+                        adModel.setNewNewspaperAbbreviation("GKA");
+                        break;
+                    case "BNH":
+                        adModel.setNewNewspaperAbbreviation("FBN");
+                        break;
+                    case "EMS":
+                        adModel.setNewNewspaperAbbreviation("GEM");
+                        break;
+                }
+
                 coupleFamAdProperties(adModel);
 
                 if(!isDuplicate(adModel)) {
                     logger.info("FamAd: Model is saved in DB");
-                    famAdvertIdRepo.save(adModel);
+                    famAdRepository.save(adModel);
                 } else
-                logger.info("FamAd: Model already exists in DB");
+                    logger.info("FamAd: Model already exists in DB");
             }
         }
     }
 
-    private void coupleFamAdProperties(FamAdPageModel famAd) {
-
+    /**
+     * Save the family ad properties and bind them to the famAds
+     *
+     * @param famAd model
+     */
+    public void coupleFamAdProperties(FamAdPageModel famAd) {
         //Get x, y coordinates and width and height of an advertisement
         WebElement columnId = driver.findElement(By.id(famAd.getColumnId()));
         WebElement nestedElement = columnId.findElement(By.id("f0"));
@@ -279,7 +299,7 @@ public class NewspaperScanner {
      * @return boolean
      */
     private boolean isDuplicate(FamAdPageModel model) {
-        List<FamAdPageModel> models = famAdvertIdRepo.findAll();
+        List<FamAdPageModel> models = famAdRepository.findAll();
 
         for(FamAdPageModel c : models) {
             if(model.getName().equals(c.getName()))

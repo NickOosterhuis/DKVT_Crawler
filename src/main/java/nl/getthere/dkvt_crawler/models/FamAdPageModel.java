@@ -18,8 +18,11 @@ public class FamAdPageModel {
     @Column(nullable = false)
     private String date;
 
-    @Column(nullable = false, name = "abbriviation")
+    @Column(nullable = false, name = "abbreviation")
     private String newspaperAbbreviation;
+
+    @Column(name = "new_abbreviation")
+    private String newNewspaperAbbreviation;
 
     @Column(nullable = false, name = "page_number")
     private String pageNumber;
@@ -36,6 +39,18 @@ public class FamAdPageModel {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="FamAdProperties")
     private FamAdPropertyModel famAdPropertyModel;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="NdcData")
+    private FamAdNdcDataModel famAdNdcDataModel;
+
+    public FamAdNdcDataModel getFamAdNdcDataModel() {
+        return famAdNdcDataModel;
+    }
+
+    public void setFamAdNdcDataModel(FamAdNdcDataModel famAdNdcDataModel) {
+        this.famAdNdcDataModel = famAdNdcDataModel;
+    }
 
     public FamAdPropertyModel getFamAdPropertyModel() {
         return famAdPropertyModel;
@@ -83,6 +98,14 @@ public class FamAdPageModel {
 
     public void setNewspaperAbbreviation(String newspaperAbbreviation) {
         this.newspaperAbbreviation = newspaperAbbreviation;
+    }
+
+    public String getNewNewspaperAbbreviation() {
+        return newNewspaperAbbreviation;
+    }
+
+    public void setNewNewspaperAbbreviation(String newNewspaperAbbreviation) {
+        this.newNewspaperAbbreviation = newNewspaperAbbreviation;
     }
 
     public String getPageNumber() {

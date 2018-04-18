@@ -141,5 +141,22 @@
     <orderEntry type="library" name="Maven: com.vaadin.external:gentyref:1.2.0.vaadin1" level="project" />
     <orderEntry type="library" name="Maven: com.vaadin:vaadin-spring:3.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pdfbox:pdfbox:1.8.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pdfbox:fontbox:1.8.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pdfbox:jempbox:1.8.3" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://D:/opencv/build/java/opencv-341.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <NATIVE>
+          <root url="file://D:/opencv/build/java/x64" />
+        </NATIVE>
+        <SOURCES>
+          <root url="jar://D:/opencv/build/java/opencv-341.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>
