@@ -4,6 +4,9 @@ import nl.getthere.imageprocessing.models.NDCModel;
 import nl.getthere.imageprocessing.repositories.NDCRepository;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageTree;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +28,9 @@ public class PdfToImg {
     private final File directory = new File("D:\\testset familieberichten GKA_FBN_GEM_2017\\testset familieberichten");
 
     public void makeMapStructure() {
+
+        System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
+
         List<File> files = addFilesToList(directory);
         Long filenameNumber;
         Format formatter = new SimpleDateFormat("YYYMMdd");
@@ -43,6 +49,12 @@ public class PdfToImg {
 
             if(!adStatus.equals("Comfirmed") && pageNumber!= 0) {
                 File mapStructure = new File("D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumberString + "\\NDC");
+
+                if(mapStructure.exists()) {
+                    System.out.println("Folder Deleted ->" + mapStructure.getAbsolutePath());
+                    mapStructure.delete();
+                }
+
                 if (!mapStructure.exists()) {
                     mapStructure.mkdirs();
                     System.out.println("Folder Created ->" + mapStructure.getAbsolutePath());
@@ -51,10 +63,10 @@ public class PdfToImg {
                 try {
                     if (filenameNumber == model.getMaterialId()) {
                         PDDocument document = PDDocument.load(file);
-                        List<PDPage> pages = document.getDocumentCatalog().getAllPages();
+                        PDFRenderer pdfRenderer = new PDFRenderer(document);
 
-                        for (PDPage page : pages) {
-                            BufferedImage image = page.convertToImage(BufferedImage.TYPE_INT_RGB, 100);
+                        for (int page = 0; page < document.getNumberOfPages(); page++ ) {
+                            BufferedImage image = pdfRenderer.renderImageWithDPI(page, 100);
                             File output = new File(mapStructure + "\\" + filenameNumber.toString() + ".jpg");
                             ImageIO.write(image, "jpg", output);
                         }

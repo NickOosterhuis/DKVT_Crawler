@@ -2,7 +2,7 @@ package nl.getthere;
 
 import nl.getthere.dkvt_crawler.crawlers.*;
 import nl.getthere.imageprocessing.matching.OpenCvTest;
-import nl.getthere.imageprocessing.matching.OpenCvTest2;
+import nl.getthere.imageprocessing.matching.KnnOpenCvMatcher;
 import nl.getthere.imageprocessing.matching.RGBMatchingAlgorithm;
 import nl.getthere.mapstructure.PdfToImg;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class Application {
 	private OpenCvTest openCvTest;
 
 	@Autowired
-	private OpenCvTest2 openCvTest2;
+	private KnnOpenCvMatcher knnOpenCvMatcher;
 
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(Application.class);
@@ -51,16 +51,16 @@ public class Application {
 		app.run(args);
 	}
 
-	@Bean
-	public CommandLineRunner startCrawling() {
-		return (args) -> {
-			//abbreviationCrawler.crawl();
-			//newspaperIdCrawler.crawl();
-            //famAdCrawler.crawl();
-			//leftOverAdCrawler.crawl();
-			famAdImageCrawler.crawl();
-		};
-	}
+//	@Bean
+//	public CommandLineRunner startCrawling() {
+//		return (args) -> {
+//			//abbreviationCrawler.crawl();
+//			//newspaperIdCrawler.crawl();
+//            //famAdCrawler.crawl();
+//			//leftOverAdCrawler.crawl();
+//			//famAdImageCrawler.crawl();
+//		};
+//	}
 
 //	@Bean
 //    public CommandLineRunner createMapStructure() {
@@ -83,10 +83,10 @@ public class Application {
 //		};
 //	}
 
-//	@Bean
-//	public CommandLineRunner openCvMatching1() {
-//		return(args) -> {
-//			openCvTest2.match();
-//		};
-//	}
+	@Bean
+	public CommandLineRunner openCvMatching1() {
+		return(args) -> {
+			knnOpenCvMatcher.match();
+		};
+	}
 }
