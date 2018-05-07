@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
 
 /**
+ * Class to crawl family advertisements, modify them and save them in a db
+ *
  * @author Nick Oosterhuis
  */
 @Component

@@ -5,6 +5,11 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+/**
+ * The coupling model between the crawled ads and the NDC ads
+ *
+ * @author Nick Oosterhuis
+ */
 @Entity(name = "NDC_data")
 public class NDCModel {
 

@@ -5,7 +5,7 @@ import nl.getthere.dkvt_crawler.models.FamAdPageModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
 import nl.getthere.imageprocessing.models.NDCModel;
 import nl.getthere.imageprocessing.repositories.NDCRepository;
-import nl.getthere.mapstructure.PdfToImg;
+import nl.getthere.helpers.PdfToImg;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.features2d.*;
@@ -23,6 +23,11 @@ import static org.opencv.imgcodecs.Imgcodecs.imread;
 import static org.opencv.imgcodecs.Imgcodecs.imwrite;
 import static org.opencv.imgproc.Imgproc.line;
 
+/**
+ * Class to match the Crawled Images with the NDC Images and save that coupling in the database
+ *
+ * @author Nick Oosterhuis
+ */
 @Component
 public class KnnOpenCvMatcher {
 
@@ -37,9 +42,6 @@ public class KnnOpenCvMatcher {
 
     private static final Logger logger = LoggerFactory.getLogger(KnnOpenCvMatcher.class);
 
-    private String abbreviation;
-    private String pageNumber;
-    private String date;
     private String adName;
     private String ndcFileName;
     private FamAdPageModel currentFamAd;
@@ -55,28 +57,23 @@ public class KnnOpenCvMatcher {
     private Mat outputImage;
 
     public void match() {
-
         List<FamAdPageModel> famAds = famAdRepository.findAllByFamAdNdcDataModelAlgorithmCategory(1);
-        List<FamAdPageModel> remainingAds = famAdRepository.findAllByFamAdNdcDataModelAlgorithmCategory(5);
 
+        matchAds(famAds);
+    }
+
+    public void matchAds(List<FamAdPageModel> famAds) {
         if (famAds.isEmpty()) {
             coupleDB();
             famAds = famAdRepository.findAllByFamAdNdcDataModelAlgorithmCategory(1);
         }
 
-        if(!remainingAds.isEmpty()) {
-            for (FamAdPageModel remainingAd : remainingAds) {
-                remainingAd.getFamAdNdcDataModel().setAlgorithmCategory(3);
-                famAdRepository.save(remainingAd);
-            }
-        }
-
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
         for (FamAdPageModel famAd : famAds) {
-            abbreviation = famAd.getNewNewspaperAbbreviation();
-            pageNumber = famAd.getPageNumber();
-            date = famAd.getDate();
+            String abbreviation = famAd.getNewNewspaperAbbreviation();
+            String pageNumber = famAd.getPageNumber();
+            String date = famAd.getDate();
             adName = famAd.getName();
             currentFamAd = famAd;
 
@@ -140,7 +137,7 @@ public class KnnOpenCvMatcher {
             System.out.println("");
         }
         else if (algorithmCategory == 5) {
-            logger.error("Matching: Not able to match image with current algorithms!");
+            logger.error("Matching: Not able to matchAds image with current algorithms!");
             System.out.println("");
         }
     }
@@ -150,7 +147,7 @@ public class KnnOpenCvMatcher {
         DescriptorExtractor descriptorExtractor = DescriptorExtractor.create(DescriptorExtractor.AKAZE);
         DescriptorMatcher descriptorMatcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMINGLUT);
         int akazePoints = 100;
-        float akazeRadius = 0.7f;
+        float akazeRadius = 0.5f;
 
         logger.info("Matching method: Akaze");
 
@@ -162,7 +159,7 @@ public class KnnOpenCvMatcher {
         DescriptorExtractor descriptorExtractor = DescriptorExtractor.create(DescriptorExtractor.AKAZE);
         DescriptorMatcher descriptorMatcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMINGLUT);
         int pyramidAkazePoints = 30;
-        float pyramidAkazeRadius = 0.6f;
+        float pyramidAkazeRadius = 0.5f;
 
         logger.info("Matching method: Pyramid Akaze");
 
@@ -170,10 +167,10 @@ public class KnnOpenCvMatcher {
     }
 
     private void DynamicAkazeSettings() {
-        FeatureDetector featureDetector = FeatureDetector.create(FeatureDetector.DYNAMIC_AKAZE);
-        DescriptorExtractor descriptorExtractor = DescriptorExtractor.create(DescriptorExtractor.AKAZE);
+        FeatureDetector featureDetector = FeatureDetector.create(FeatureDetector.FAST);
+        DescriptorExtractor descriptorExtractor = DescriptorExtractor.create(DescriptorExtractor.ORB);
         DescriptorMatcher descriptorMatcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMINGLUT);
-        int dynamicAkazePoints = 30;
+        int dynamicAkazePoints = 300;
         float dynamicAkazeRadius = 0.5f;
 
         logger.info("Matching method: Dynamic Akaze");
@@ -276,9 +273,10 @@ public class KnnOpenCvMatcher {
 
             //drawing image for testing
             transformAndDraw(goodMatchesList, objectKeyPoints, sceneKeyPoints, objectImage, ndcFileDir, sceneImage, newKeypointColor, outputImage);
+
             famAdRepository.save(currentFamAd);
         } else if (goodMatchesList.size() < pointLimit && currentFamAd.getFamAdNdcDataModel().getAlgorithmCategory() == 1 && !currentFamAd.getFamAdNdcDataModel().isMatched()) {
-            logger.info("Matching: No match found with Akaze algorithm, switching algorithms!");
+            logger.info("Matching: No matchAds found with Akaze algorithm, switching algorithms!");
             System.out.println("");
 
             currentFamAd.getFamAdNdcDataModel().setMatched(false);
@@ -287,7 +285,7 @@ public class KnnOpenCvMatcher {
             famAdRepository.save(currentFamAd);
             AlgorithmSettings(currentFamAd);
         } else if (goodMatchesList.size() < pointLimit && currentFamAd.getFamAdNdcDataModel().getAlgorithmCategory() == 2 && !currentFamAd.getFamAdNdcDataModel().isMatched()) {
-            logger.info("Matching: No match found with Pyramid Akaze algorithm, switching algorithms!");
+            logger.info("Matching: No matchAds found with Pyramid Akaze algorithm, switching algorithms!");
             System.out.println("");
 
             currentFamAd.getFamAdNdcDataModel().setMatched(false);
@@ -296,7 +294,7 @@ public class KnnOpenCvMatcher {
             famAdRepository.save(currentFamAd);
             AlgorithmSettings(currentFamAd);
         } else if (goodMatchesList.size() < pointLimit && currentFamAd.getFamAdNdcDataModel().getAlgorithmCategory() == 3 && !currentFamAd.getFamAdNdcDataModel().isMatched()){
-            logger.info("Matching: No match found with Dynamic Akaze algorithm!");
+            logger.info("Matching: No matchAds found with Dynamic Akaze algorithm!");
 
             currentFamAd.getFamAdNdcDataModel().setMatched(false);
             currentFamAd.getFamAdNdcDataModel().setAlgorithmCategory(5);
@@ -340,7 +338,7 @@ public class KnnOpenCvMatcher {
         obj_corners.put(2, 0, objectImage.cols(), objectImage.rows());
         obj_corners.put(3, 0, 0, objectImage.rows());
 
-        //logger.info("Transforming object: Cutting corners to match scene corners");
+        //logger.info("Transforming object: Cutting corners to matchAds scene corners");
         Core.perspectiveTransform(obj_corners, scene_corners, homography);
 
         Mat img = imread(ndcDir, CV_LOAD_IMAGE_COLOR);
@@ -356,15 +354,14 @@ public class KnnOpenCvMatcher {
 
         Features2d.drawMatches(objectImage, objectKeyPoints, sceneImage, sceneKeyPoints, goodMatches, matchOutput, matchesColor, newKeypointColor, new MatOfByte(), 2);
 
-        File dir = new File("D:\\Matches\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\");
+        File dir = new File("D:\\Matches");
 
         if (!dir.exists()) {
-            //logger.info("Map Structure: creating folders");
             dir.mkdirs();
         }
 
-        imwrite("D:\\Matches\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + adName + "_output" + ".jpg", outputImage);
-        imwrite("D:\\Matches\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + adName + "_matched" + ".jpg", matchOutput);
-        imwrite("D:\\Matches\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + adName + "_formatted" + ".jpg", img);
+        imwrite("D:\\Matches\\" + adName + "_output" + ".jpg", outputImage);
+        imwrite("D:\\Matches\\" + adName + "_matched" + ".jpg", matchOutput);
+        imwrite("D:\\Matches\\" + adName + "_formatted" + ".jpg", img);
     }
 }

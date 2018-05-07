@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * When crawling every newspaper, it deletes the abbreviations from the database which are old newspapers
+ *
  * @author Nick Oosterhuis
  */
 public class NewspapersToDelete {

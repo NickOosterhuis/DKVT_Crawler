@@ -3,6 +3,8 @@ package nl.getthere.dkvt_crawler.models;
 import javax.persistence.*;
 
 /**
+ * The full id of the newspapers
+ *
  * @author Nick Oosterhuis
  */
 @Entity(name = "NewspaperId")

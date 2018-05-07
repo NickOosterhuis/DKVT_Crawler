@@ -3,6 +3,11 @@ package nl.getthere.dkvt_crawler.models;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
+/**
+ * The NDC datamodel for coupling between crawled and NDC files
+ *
+ * @author Nick Oosterhuis
+ */
 @Entity(name="NdcData")
 public class FamAdNdcDataModel {
 
@@ -10,7 +15,7 @@ public class FamAdNdcDataModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "material_id")
+    @Column(name = "material_id", unique = true)
     private long materialId;
 
     @Column(name = "note")

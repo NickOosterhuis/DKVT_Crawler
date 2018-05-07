@@ -3,12 +3,11 @@ package nl.getthere.imageprocessing.matching;
 import nl.getthere.dkvt_crawler.models.FamAdPageModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
 import nl.getthere.imageprocessing.repositories.NDCRepository;
-import nl.getthere.mapstructure.PdfToImg;
+import nl.getthere.helpers.PdfToImg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -17,11 +16,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Bruteforce matching algorithm which results in an inaccurate match between
+ * Crawled Images and NDC Images
+ *
+ * @author Nick Oosterhuis
+ */
 @Component
 public class RGBMatchingAlgorithm {
-
-    @Autowired
-    private NDCRepository ndcRepository;
 
     @Autowired
     private FamAdRepository famAdRepository;

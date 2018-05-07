@@ -5,6 +5,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 /**
+ * Configuration class of the webcrawler for convenience
+ *
  * @author Nick Oosterhuis
  */
 public class WebCrawlerConfig {

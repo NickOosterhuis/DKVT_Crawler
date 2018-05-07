@@ -1,11 +1,8 @@
-package nl.getthere.mapstructure;
+package nl.getthere.helpers;
 
 import nl.getthere.imageprocessing.models.NDCModel;
 import nl.getthere.imageprocessing.repositories.NDCRepository;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageTree;
-import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +16,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class makes it able to form a specific folder structure on a location and covert the NDC pdf's to images
+ * using Apache PDF Box
+ *
+ * @author Nick Oosterhuis
+ */
 @Component
 public class PdfToImg {
 
@@ -27,7 +30,7 @@ public class PdfToImg {
 
     private final File directory = new File("D:\\testset familieberichten GKA_FBN_GEM_2017\\testset familieberichten");
 
-    public void makeMapStructure() {
+    public void makeFolderStructure() {
 
         System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
 

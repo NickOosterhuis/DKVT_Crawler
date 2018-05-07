@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
+ * The abbreviation model
+ *
  * @author Nick Oosterhuis
  */
 @Entity(name = "Abbreviations")

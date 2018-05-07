@@ -1,11 +1,8 @@
 package nl.getthere.dkvt_crawler.crawlers;
 
-import nl.getthere.dkvt_crawler.models.FamAdPageModel;
-import nl.getthere.dkvt_crawler.models.ImageModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
 import nl.getthere.imageprocessing.models.NDCModel;
 import nl.getthere.imageprocessing.repositories.NDCRepository;
-import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,22 +18,21 @@ import java.util.Set;
 import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.quitDriver;
 import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.setupDriver;
 
+/**
+ * Class to crawl the famAds which weren't able to be crawled in the FamAdCrawler
+ *
+ * @author Nick Oosterhuis
+ */
 @Component
-public class LeftOverFamAdCrawler {
+public class RemainingAdCrawler {
 
     @Autowired
     private NDCRepository ndcRepository;
 
     @Autowired
-    private FamAdRepository famAdRepository;
-
-    @Autowired
     private FamAdCrawler famAdCrawler;
 
-    @Autowired
-    private FamAdImageCrawler famAdImageCrawler;
-
-    private static final Logger logger = LoggerFactory.getLogger(LeftOverFamAdCrawler.class);
+    private static final Logger logger = LoggerFactory.getLogger(RemainingAdCrawler.class);
 
     public void crawl() {
         Set<String> famAdsUrls = getFamAdsUrls();

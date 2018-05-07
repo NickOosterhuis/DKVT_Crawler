@@ -3,6 +3,8 @@ package nl.getthere.dkvt_crawler.models;
 import javax.persistence.*;
 
 /**
+ * The image model
+ *
  * @author Nick Oosterhuis
  */
 @Entity(name = "FamAdImages")

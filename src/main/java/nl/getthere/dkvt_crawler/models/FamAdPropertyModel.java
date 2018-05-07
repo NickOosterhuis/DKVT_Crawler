@@ -3,6 +3,8 @@ package nl.getthere.dkvt_crawler.models;
 import javax.persistence.*;
 
 /**
+ * Extra properties of the FamAds
+ *
  * @author Nick Oosterhuis
  */
 @Entity(name = "FamAdProperties")

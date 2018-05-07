@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+/**
+ * @author Nick Oosterhuis
+ */
 public interface FamAdRepository extends JpaRepository<FamAdPageModel, Long> {
     List<FamAdPageModel> findAllByFamAdNdcDataModelAlgorithmCategory(int category);
-    FamAdPageModel findFamAdPageModelByName(String name);
 }

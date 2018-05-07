@@ -1,10 +1,10 @@
 package nl.getthere;
 
 import nl.getthere.dkvt_crawler.crawlers.*;
-import nl.getthere.imageprocessing.matching.OpenCvTest;
+import nl.getthere.helpers.FormatNdcData;
 import nl.getthere.imageprocessing.matching.KnnOpenCvMatcher;
 import nl.getthere.imageprocessing.matching.RGBMatchingAlgorithm;
-import nl.getthere.mapstructure.PdfToImg;
+import nl.getthere.helpers.PdfToImg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
@@ -22,7 +22,7 @@ public class Application {
 	private NewspaperAbbreviationCrawler abbreviationCrawler;
 
 	@Autowired
-	private FullNewspaperIdCrawler newspaperIdCrawler;
+	private NewspaperIdCrawler newspaperIdCrawler;
 
 	@Autowired
 	private FamAdImageCrawler famAdImageCrawler;
@@ -31,7 +31,7 @@ public class Application {
     private FamAdCrawler famAdCrawler;
 
 	@Autowired
-	private LeftOverFamAdCrawler leftOverAdCrawler;
+	private RemainingAdCrawler remainingAdCrawler;
 
 	@Autowired
     private PdfToImg pdfToImg;
@@ -40,10 +40,10 @@ public class Application {
     private RGBMatchingAlgorithm rgbMatchingAlgorithm;
 
 	@Autowired
-	private OpenCvTest openCvTest;
+	private KnnOpenCvMatcher knnOpenCvMatcher;
 
 	@Autowired
-	private KnnOpenCvMatcher knnOpenCvMatcher;
+	private FormatNdcData formatNdcData;
 
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(Application.class);
@@ -54,39 +54,39 @@ public class Application {
 //	@Bean
 //	public CommandLineRunner startCrawling() {
 //		return (args) -> {
-//			//abbreviationCrawler.crawl();
-//			//newspaperIdCrawler.crawl();
-//            //famAdCrawler.crawl();
-//			//leftOverAdCrawler.crawl();
-//			//famAdImageCrawler.crawl();
+//			abbreviationCrawler.crawl();
+//			newspaperIdCrawler.crawl();
+//            famAdCrawler.crawl();
+//			remainingAdCrawler.crawl();
+//			famAdImageCrawler.crawl();
 //		};
 //	}
-
+//
 //	@Bean
-//    public CommandLineRunner createMapStructure() {
+//    public CommandLineRunner createFolderStructure() {
 //	    return(args) -> {
-//              pdfToImg.makeMapStructure();
+//              pdfToImg.makeFolderStructure();
 //        };
 //    }
-
+//
 //    @Bean
 //    public CommandLineRunner bruteForceMatching() {
 //	    return(args) -> {
 //			rgbMatchingAlgorithm.match();
 //        };
 //    }
-
+//
 //	@Bean
-//	public CommandLineRunner openCvMatching() {
+//	public CommandLineRunner KnnMatching() {
 //		return(args) -> {
-//			openCvTest.match();
+//			knnOpenCvMatcher.doAllMatches();
 //		};
 //	}
 
 	@Bean
-	public CommandLineRunner openCvMatching1() {
+	public CommandLineRunner formatNote() {
 		return(args) -> {
-			knnOpenCvMatcher.match();
+			formatNdcData.formatData();
 		};
 	}
 }

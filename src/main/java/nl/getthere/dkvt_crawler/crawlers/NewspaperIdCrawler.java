@@ -19,11 +19,13 @@ import java.util.*;
 import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
 
 /**
+ * Class to gather the full id of every newspaper, these are saved into the DB
+ *
  * @author Nick Oosterhuis
  */
 @Component
 @Order(2)
-public class FullNewspaperIdCrawler {
+public class NewspaperIdCrawler {
 
     @Autowired
     private NewspaperAbbreviationRepository abbreviationRepo;
@@ -31,7 +33,7 @@ public class FullNewspaperIdCrawler {
     @Autowired
     private FullNewspaperIdRepository idRepo;
 
-    private static final Logger logger = LoggerFactory.getLogger(FullNewspaperIdCrawler.class);
+    private static final Logger logger = LoggerFactory.getLogger(NewspaperIdCrawler.class);
 
     /**
      * Save full newspaper id to database

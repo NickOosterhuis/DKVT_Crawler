@@ -10,13 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 import static nl.getthere.dkvt_crawler.constants.NewspapersToDelete.newspapersToDelete;
 import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
 
 /**
+ * Class to save and crawl the abbreviations of every specified newspaper
+ *
  * @author Nick Oosterhuis
  */
 @Component

@@ -1,11 +1,8 @@
 package nl.getthere.dkvt_crawler.crawlers;
 
-import javafx.scene.transform.Scale;
 import nl.getthere.dkvt_crawler.models.FamAdPageModel;
 import nl.getthere.dkvt_crawler.models.ImageModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
-import nl.getthere.imageprocessing.matching.RGBMatchingAlgorithm;
-import nl.getthere.imageprocessing.repositories.NDCRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
@@ -17,7 +14,6 @@ import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -25,6 +21,8 @@ import java.util.List;
 import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
 
 /**
+ * Class to gather the saved familyAds form the DB, download the images to disk and crop them to a certain size
+ *
  * @author Nick Oosterhuis
  */
 @Component

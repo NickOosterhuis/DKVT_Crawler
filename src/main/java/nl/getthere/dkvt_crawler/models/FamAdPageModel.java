@@ -3,6 +3,8 @@ package nl.getthere.dkvt_crawler.models;
 import javax.persistence.*;
 
 /**
+ * The FamAd model
+ *
  * @author Nick Oosterhuis
  */
 @Entity(name = "FamAds")
