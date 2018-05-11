@@ -62,7 +62,7 @@ public class KnnOpenCvMatcher {
         matchAds(famAds);
     }
 
-    public void matchAds(List<FamAdPageModel> famAds) {
+    private void matchAds(List<FamAdPageModel> famAds) {
         if (famAds.isEmpty()) {
             coupleDB();
             famAds = famAdRepository.findAllByFamAdNdcDataModelAlgorithmCategory(1);
@@ -178,7 +178,7 @@ public class KnnOpenCvMatcher {
         compareFeatures(featureDetector, descriptorExtractor, descriptorMatcher, dynamicAkazeRadius, dynamicAkazePoints);
     }
 
-    private void compareFeatures(FeatureDetector featureDetector, DescriptorExtractor descriptorExtractor, DescriptorMatcher descriptorMatcher, float nndrRatio, int pointLimit) {
+    public void compareFeatures(FeatureDetector featureDetector, DescriptorExtractor descriptorExtractor, DescriptorMatcher descriptorMatcher, float nndrRatio, int pointLimit) {
         objectKeyPoints = new MatOfKeyPoint();
 
         featureDetector.detect(objectImage, objectKeyPoints);
@@ -359,9 +359,6 @@ public class KnnOpenCvMatcher {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-
-        imwrite("D:\\Matches\\" + adName + "_output" + ".jpg", outputImage);
         imwrite("D:\\Matches\\" + adName + "_matched" + ".jpg", matchOutput);
-        imwrite("D:\\Matches\\" + adName + "_formatted" + ".jpg", img);
     }
 }

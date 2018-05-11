@@ -10,4 +10,8 @@ import java.util.List;
  */
 public interface FamAdRepository extends JpaRepository<FamAdPageModel, Long> {
     List<FamAdPageModel> findAllByFamAdNdcDataModelAlgorithmCategory(int category);
+    List<FamAdPageModel> findAllByFamAdNdcDataModelMaterialIdNotNull();
+
+    boolean existsByFamAdNdcDataModelMaterialId(long materialId);
+
 }

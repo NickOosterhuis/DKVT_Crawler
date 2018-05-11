@@ -15,6 +15,8 @@ public class FamAdNdcDataModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+
+
     @Column(name = "material_id", unique = true)
     private long materialId;
 

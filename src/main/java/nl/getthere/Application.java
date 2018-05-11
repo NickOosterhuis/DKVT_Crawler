@@ -1,10 +1,13 @@
 package nl.getthere;
 
+import javafx.scene.web.HTMLEditorSkin;
 import nl.getthere.dkvt_crawler.crawlers.*;
 import nl.getthere.helpers.FormatNdcData;
 import nl.getthere.imageprocessing.matching.KnnOpenCvMatcher;
+import nl.getthere.imageprocessing.matching.MatchManualMaterialId;
 import nl.getthere.imageprocessing.matching.RGBMatchingAlgorithm;
 import nl.getthere.helpers.PdfToImg;
+import nl.getthere.imageprocessing.matching.RemainingMatches;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
@@ -45,6 +48,12 @@ public class Application {
 	@Autowired
 	private FormatNdcData formatNdcData;
 
+	@Autowired
+	private RemainingMatches remainingMatches;
+
+	@Autowired
+	private MatchManualMaterialId manualMatcher;
+
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(Application.class);
 		app.setBannerMode(Banner.Mode.OFF);
@@ -61,32 +70,34 @@ public class Application {
 //			famAdImageCrawler.crawl();
 //		};
 //	}
-//
+
 //	@Bean
 //    public CommandLineRunner createFolderStructure() {
-//	    return(args) -> {
-//              pdfToImg.makeFolderStructure();
-//        };
+//	    return(args) -> pdfToImg.makeFolderStructure();
 //    }
-//
+
 //    @Bean
 //    public CommandLineRunner bruteForceMatching() {
-//	    return(args) -> {
-//			rgbMatchingAlgorithm.match();
-//        };
+//	    return(args) -> rgbMatchingAlgorithm.match();
 //    }
-//
+
 //	@Bean
 //	public CommandLineRunner KnnMatching() {
-//		return(args) -> {
-//			knnOpenCvMatcher.doAllMatches();
-//		};
+//		return(args) -> knnOpenCvMatcher.match();
+//	}
+
+//	@Bean
+//	public CommandLineRunner checkMaterialIds() {
+//		return(args) -> remainingMatches.match();
+//	}
+
+//	@Bean
+//	public CommandLineRunner doManualMatching() {
+//		return (args) -> manualMatcher.match();
 //	}
 
 	@Bean
 	public CommandLineRunner formatNote() {
-		return(args) -> {
-			formatNdcData.formatData();
-		};
+		return(args) -> formatNdcData.formatData();
 	}
 }
