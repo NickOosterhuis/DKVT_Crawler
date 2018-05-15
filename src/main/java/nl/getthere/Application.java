@@ -1,6 +1,5 @@
 package nl.getthere;
 
-import javafx.scene.web.HTMLEditorSkin;
 import nl.getthere.dkvt_crawler.crawlers.*;
 import nl.getthere.helpers.FormatNdcData;
 import nl.getthere.imageprocessing.matching.KnnOpenCvMatcher;
@@ -8,6 +7,8 @@ import nl.getthere.imageprocessing.matching.MatchManualMaterialId;
 import nl.getthere.imageprocessing.matching.RGBMatchingAlgorithm;
 import nl.getthere.helpers.PdfToImg;
 import nl.getthere.imageprocessing.matching.RemainingMatches;
+import nl.getthere.svggenerator.Generate;
+import nl.getthere.svggenerator.generator.SvgGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
@@ -54,6 +55,9 @@ public class Application {
 	@Autowired
 	private MatchManualMaterialId manualMatcher;
 
+	@Autowired
+	private Generate generate;
+
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(Application.class);
 		app.setBannerMode(Banner.Mode.OFF);
@@ -96,8 +100,13 @@ public class Application {
 //		return (args) -> manualMatcher.match();
 //	}
 
+//	@Bean
+//	public CommandLineRunner formatNote() {
+//		return(args) -> formatNdcData.formatData();
+//	}
+
 	@Bean
-	public CommandLineRunner formatNote() {
-		return(args) -> formatNdcData.formatData();
+	public CommandLineRunner makeSVG() {
+		return(args) -> generate.listSubDirectories("D:\\FamAds");
 	}
 }

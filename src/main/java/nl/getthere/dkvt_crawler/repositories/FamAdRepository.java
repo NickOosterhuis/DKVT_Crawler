@@ -11,6 +11,7 @@ import java.util.List;
 public interface FamAdRepository extends JpaRepository<FamAdPageModel, Long> {
     List<FamAdPageModel> findAllByFamAdNdcDataModelAlgorithmCategory(int category);
     List<FamAdPageModel> findAllByFamAdNdcDataModelMaterialIdNotNull();
+    List<FamAdPageModel> findAllByNewNewspaperAbbreviationAndDateAndPageNumberAndFamAdNdcDataModelAlgorithmCategory(String abbreviation, String date, String pageNumber, int category);
 
     boolean existsByFamAdNdcDataModelMaterialId(long materialId);
 
