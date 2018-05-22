@@ -85,10 +85,10 @@ public class Application {
 //	    return(args) -> rgbMatchingAlgorithm.match();
 //    }
 
-//	@Bean
-//	public CommandLineRunner KnnMatching() {
-//		return(args) -> knnOpenCvMatcher.match();
-//	}
+	@Bean
+	public CommandLineRunner KnnMatching() {
+		return(args) -> knnOpenCvMatcher.match();
+	}
 
 //	@Bean
 //	public CommandLineRunner checkMaterialIds() {
@@ -105,8 +105,8 @@ public class Application {
 //		return(args) -> formatNdcData.formatData();
 //	}
 
-	@Bean
-	public CommandLineRunner makeSVG() {
-		return(args) -> generate.listSubDirectories("D:\\FamAds");
-	}
+//	@Bean
+//	public CommandLineRunner makeSVG() {
+//		return(args) -> generate.listSubDirectories("D:\\FamAds");
+//	}
 }

@@ -41,8 +41,9 @@ public class SvgGenerator {
         for (Rect rect: rects) {
             int x = (rect.getX());
             int y = (rect.getY());
+            int id = (rect.getId());
 
-            writer.write("<g>" + "<rect x=\"" + (x + padding) + "\" y=\"" + (y + padding) + "\" width=\"" + ((rect.getRectangle().getWidth() - padding)) + "\" height=\"" + ((rect.getRectangle().getHeight() - padding))
+            writer.write("<g>" + "<rect id=\"" + id + "\" x=\"" + (x + padding) + "\" y=\"" + (y + padding) + "\" width=\"" + ((rect.getRectangle().getWidth() - padding)) + "\" height=\"" + ((rect.getRectangle().getHeight() - padding))
                     + "\" style=\"fill:" + "blue" + ";stroke-width:" + padding + ";stroke:black\" ></rect>" + "<text x=\"" + (x + padding) + "\" y=\"" + (y + 20) + "\" fill=\"snow\" >"
                     + rect.getName() + "</text>" + "</g>\n");
         }

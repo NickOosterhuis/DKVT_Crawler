@@ -18,6 +18,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static nl.getthere.helpers.FamAdHelper.*;
 import static org.opencv.imgcodecs.Imgcodecs.CV_LOAD_IMAGE_COLOR;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 import static org.opencv.imgcodecs.Imgcodecs.imwrite;
@@ -42,9 +43,8 @@ public class KnnOpenCvMatcher {
 
     private static final Logger logger = LoggerFactory.getLogger(KnnOpenCvMatcher.class);
 
-    private String adName;
     private String ndcFileName;
-    private FamAdPageModel currentFamAd;
+
 
     private Mat objectImage;
     private Mat sceneImage;
@@ -67,44 +67,30 @@ public class KnnOpenCvMatcher {
             coupleDB();
             famAds = famAdRepository.findAllByFamAdNdcDataModelAlgorithmCategory(1);
         }
+        setDirs(famAds);
 
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-        for (FamAdPageModel famAd : famAds) {
-            String abbreviation = famAd.getNewNewspaperAbbreviation();
-            String pageNumber = famAd.getPageNumber();
-            String date = famAd.getDate();
-            adName = famAd.getName();
-            currentFamAd = famAd;
+        File ndcFolder = new File(ndcDir);
 
-            if(date.equals("20171228")) {
-                date = "20171227";
+        List<File> ndcFiles = pdfToImg.addFilesToList(ndcFolder);
+
+        for (File ndcFile : ndcFiles) {
+            ndcFileName = ndcFile.getName();
+            ndcFileDir = ndcDir + ndcFileName;
+
+            if(currentFamAd.getFamAdNdcDataModel().getAlgorithmCategory() == 5) {
+                currentFamAd.getFamAdNdcDataModel().setAlgorithmCategory(1);
             }
 
-            String krantVanToenDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "Krant Van Toen" + "\\" + adName + ".jpg";
-            String ndcDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "NDC\\";
+            logger.info("Matching: Matcher Started");
 
-            File ndcFolder = new File(ndcDir);
+            objectImage = imread(krantVanToenDir, CV_LOAD_IMAGE_COLOR);
+            sceneImage = imread(ndcFileDir, CV_LOAD_IMAGE_COLOR);
 
-            List<File> ndcFiles = pdfToImg.addFilesToList(ndcFolder);
+            logger.info("Matching: " + krantVanToenDir + " VS " + ndcFileDir);
 
-            for (File ndcFile : ndcFiles) {
-                ndcFileName = ndcFile.getName();
-                ndcFileDir = ndcDir + ndcFileName;
-
-                if(currentFamAd.getFamAdNdcDataModel().getAlgorithmCategory() == 5) {
-                    currentFamAd.getFamAdNdcDataModel().setAlgorithmCategory(1);
-                }
-
-                logger.info("Matching: Matcher Started");
-
-                objectImage = imread(krantVanToenDir, CV_LOAD_IMAGE_COLOR);
-                sceneImage = imread(ndcFileDir, CV_LOAD_IMAGE_COLOR);
-
-                logger.info("Matching: " + krantVanToenDir + " VS " + ndcFileDir);
-
-                AlgorithmSettings(currentFamAd);
-            }
+            AlgorithmSettings(currentFamAd);
         }
     }
 

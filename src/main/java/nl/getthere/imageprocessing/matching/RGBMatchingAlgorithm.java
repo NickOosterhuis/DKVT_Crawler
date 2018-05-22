@@ -16,6 +16,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import static nl.getthere.helpers.FamAdHelper.krantVanToenDir;
+import static nl.getthere.helpers.FamAdHelper.ndcDir;
+import static nl.getthere.helpers.FamAdHelper.setDirs;
+
 /**
  * Bruteforce matching algorithm which results in an inaccurate match between
  * Crawled Images and NDC Images
@@ -34,41 +38,32 @@ public class RGBMatchingAlgorithm {
     public BufferedImage match() throws IOException {
 
         List<FamAdPageModel> famAds = famAdRepository.findAll();
-        BufferedImage winner = null;
+        BufferedImage winner;
 
-        for(FamAdPageModel famAd : famAds) {
+        setDirs(famAds);
 
-            HashMap<Double, BufferedImage> potentialWinners = new HashMap<>();
+        HashMap<Double, BufferedImage> potentialWinners = new HashMap<>();
 
-            String abbreviation = famAd.getNewNewspaperAbbreviation();
-            String pageNumber = famAd.getPageNumber();
-            String date = famAd.getDate();
-            String adName = famAd.getName();
+        File dkvtFile = new File(krantVanToenDir);
+        String dkvtName = dkvtFile.getName();
+        BufferedImage dkvtImage = ImageIO.read(dkvtFile);
 
-            String krantVanToenDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "Krant Van Toen" + "\\" + adName + ".jpg";
-            String ndcDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "NDC";
-
-            File dkvtFile = new File(krantVanToenDir);
-            String dkvtName = dkvtFile.getName();
-            BufferedImage dkvtImage = ImageIO.read(dkvtFile);
-
-            File ndcFolder = new File(ndcDir);
-            List<File> ndcFiles = pdfToImg.addFilesToList(ndcFolder);
+        File ndcFolder = new File(ndcDir);
+        List<File> ndcFiles = pdfToImg.addFilesToList(ndcFolder);
 
 
-            for (File ndcFile : ndcFiles) {
-                String ndcName = ndcFile.getName();
-                BufferedImage ndcImage = ImageIO.read(ndcFile);
+        for (File ndcFile : ndcFiles) {
+            String ndcName = ndcFile.getName();
+            BufferedImage ndcImage = ImageIO.read(ndcFile);
 
-                double percentage = Math.round(getDifferencePercent(dkvtImage, ndcImage, dkvtName, ndcName));
-                potentialWinners.put(percentage, ndcImage);
+            double percentage = Math.round(getDifferencePercent(dkvtImage, ndcImage, dkvtName, ndcName));
+            potentialWinners.put(percentage, ndcImage);
 
-                System.out.println(percentage);
-            }
-
-            winner = showWinner(potentialWinners);
-            System.out.println(winner);
+            System.out.println(percentage);
         }
+
+        winner = showWinner(potentialWinners);
+        System.out.println(winner);
         return winner;
     }
 

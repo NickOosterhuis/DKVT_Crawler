@@ -4,13 +4,12 @@ import java.awt.*;
 
 public class Rect {
 
-    private final int padding = 2;
     private Rectangle rectangle;
     private int column;
     private int height;
     private int x;
     private int y;
-    private String id;
+    private int id;
     private String name;
 
     public Rect(int column, int height) {
@@ -20,16 +19,17 @@ public class Rect {
         createRect(column, height);
     }
 
-    public Rect(int column, int height, String id) {
+    public Rect(int column, int height, int id, String name) {
         this.column = column;
         this.height = height;
         this.id = id;
+        this.name = name;
 
         createRect(column, height);
     }
 
     public Rectangle createRect(int column, int height) {
-        rectangle = new Rectangle((column + padding), (height + padding));
+        rectangle = new Rectangle((column), (height));
 
         return rectangle;
     }
@@ -78,11 +78,11 @@ public class Rect {
         this.height = height;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 }

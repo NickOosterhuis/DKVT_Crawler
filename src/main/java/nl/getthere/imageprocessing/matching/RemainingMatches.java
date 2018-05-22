@@ -21,6 +21,8 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static nl.getthere.helpers.FamAdHelper.ndcDir;
+import static nl.getthere.helpers.FamAdHelper.setDirs;
 import static org.opencv.imgcodecs.Imgcodecs.CV_LOAD_IMAGE_COLOR;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 import static org.opencv.imgcodecs.Imgcodecs.imwrite;
@@ -33,30 +35,11 @@ public class RemainingMatches {
     private FamAdRepository famAdRepository;
 
     @Autowired
-    private NDCRepository ndcRepository;
-
-    @Autowired
     private PdfToImg pdfToImg;
-
-    @Autowired
-    private KnnOpenCvMatcher knnOpenCvMatcher;
 
     private static final Logger logger = LoggerFactory.getLogger(RemainingMatches.class);
 
-    private String adName;
     private String ndcFileName;
-    private FamAdPageModel currentFamAd;
-    private String ndcFileDir;
-    private String ndcDir;
-    private Mat objectImage;
-    private Mat sceneImage;
-
-    //drawing variables
-    private MatOfKeyPoint objectKeyPoints;
-    private MatOfKeyPoint sceneKeyPoints;
-    private Scalar newKeypointColor;
-    private Mat outputImage;
-    private String krantVanToenDir;
 
     public void match() {
         List<FamAdPageModel> famAds = famAdRepository.findAllByFamAdNdcDataModelAlgorithmCategory(5);
@@ -67,38 +50,27 @@ public class RemainingMatches {
     public void matchAds(List<FamAdPageModel> famAds) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-        for (FamAdPageModel famAd : famAds) {
-            String abbreviation = famAd.getNewNewspaperAbbreviation();
-            String pageNumber = famAd.getPageNumber();
-            String date = famAd.getDate();
-            adName = famAd.getName();
-            currentFamAd = famAd;
+        setDirs(famAds);
 
-            if(date.equals("20171228")) {
-                date = "20171227";
-            }
-            ndcDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "NDC\\";
-            krantVanToenDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "Krant Van Toen" + "\\" + adName + ".jpg";
+        File ndcFolder = new File(ndcDir);
 
-            File ndcFolder = new File(ndcDir);
+        List<File> ndcFiles = pdfToImg.addFilesToList(ndcFolder);
+        List<Integer> materialIds = new ArrayList<>();
 
-            List<File> ndcFiles = pdfToImg.addFilesToList(ndcFolder);
-            List<Integer> materialIds = new ArrayList<>();
+        for (File ndcFile : ndcFiles) {
+            ndcFileName = ndcFile.getName();
 
-            for (File ndcFile : ndcFiles) {
-                ndcFileName = ndcFile.getName();
-
-                int materialId = Integer.parseInt(ndcFileName.replace(".jpg", ""));
-                materialIds.add(materialId);
-            }
+            int materialId = Integer.parseInt(ndcFileName.replace(".jpg", ""));
+            materialIds.add(materialId);
+        }
             List<Integer> toMatch = getToBeMatchedIds(materialIds);
 
             for(int materialid : toMatch) {
                 System.out.println("Ad Size: " + toMatch.size() + "\n Folder: " + ndcDir + "\n Material ID: " + materialid);
             }
-        }
-
     }
+
+
 
    private List<Integer> getToBeMatchedIds(List<Integer> materialIds) {
 
