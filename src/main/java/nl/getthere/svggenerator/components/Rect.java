@@ -11,12 +11,23 @@ public class Rect {
     private int y;
     private int id;
     private String name;
+    private String pageNumber;
+    private String ranking;
 
     public Rect(int column, int height) {
         this.column = column;
         this.height = height;
 
         createRect(column, height);
+    }
+
+    public Rect(int column, int height, int x, int y) {
+        this.column = column;
+        this.height = height;
+        this.x = x;
+        this.y = y;
+
+        createRect(column, height, x ,y);
     }
 
     public Rect(int column, int height, int id, String name) {
@@ -28,8 +39,14 @@ public class Rect {
         createRect(column, height);
     }
 
-    public Rectangle createRect(int column, int height) {
+    private Rectangle createRect(int column, int height) {
         rectangle = new Rectangle((column), (height));
+
+        return rectangle;
+    }
+
+    private Rectangle createRect(int column, int height, int x , int y) {
+        rectangle = new Rectangle(x, y, column, height);
 
         return rectangle;
     }
@@ -84,5 +101,21 @@ public class Rect {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setPageNumber(String pageNumber) {
+        this.pageNumber = pageNumber;
+    }
+
+    public String getPageNumber() {
+        return pageNumber;
+    }
+
+    public void setRanking(String ranking) {
+        this.ranking = ranking;
+    }
+
+    public String getRanking() {
+        return ranking;
     }
 }
