@@ -1,4 +1,4 @@
-package nl.getthere.costfunction;
+package nl.getthere.costfunction.testdata;
 
 import nl.getthere.svggenerator.components.Rect;
 
@@ -16,7 +16,7 @@ public class AdCollection {
     private static Rect ad7 = createAd(5, 5, 60, 60, "07", "1");
     private static Rect ad8 = createAd(5, 5, 70, 70, "08", "1");
     private static Rect ad9 = createAd(5, 5, 80, 80, "09", "1");
-    private static Rect ad10 = createAd(5, 5, 90, 90, "10", "1");
+    private static Rect ad10 = createAd(50, 50, 90, 900, "10", "1");
 
     private static ArrayList<Rect> adCollection = new ArrayList<>();
 

@@ -3,18 +3,17 @@ package nl.getthere.costfunction.tests;
 import nl.getthere.svggenerator.components.Page;
 import org.junit.Test;
 
-import static nl.getthere.costfunction.testdata.AdCollection.getRectList;
-import static nl.getthere.costfunction.CriteriaFunctions.isOverlapping;
+import static nl.getthere.costfunction.CriteriaFunctions.isAdPageTranscending;
 import static nl.getthere.costfunction.GeneralizedFunctions.makeFamAdPage;
+import static nl.getthere.costfunction.testdata.AdCollection.getRectList;
 import static org.junit.Assert.assertFalse;
 
-public class AdOverlapTest {
+public class AdTranscendingTest {
 
     @Test
-    public void overlapUnitTest() {
+    public void transcendingAdsTest() {
         Page page = makeFamAdPage(getRectList());
-        boolean result = isOverlapping(page);
+        boolean result = isAdPageTranscending(page);
         assertFalse(result);
-
     }
 }

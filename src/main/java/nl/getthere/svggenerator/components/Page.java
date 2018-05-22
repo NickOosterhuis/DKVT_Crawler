@@ -15,8 +15,8 @@ public class Page {
         this.supply = supply;
     }
 
-    public Rect createPage() {
-        return new Rect(width, height);
+    public void createPage() {
+        new Rect(width, height);
     }
 
     public int getWidth() {
