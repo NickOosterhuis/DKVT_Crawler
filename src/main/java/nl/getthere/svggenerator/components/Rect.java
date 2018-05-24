@@ -13,6 +13,7 @@ public class Rect {
     private String name;
     private String pageNumber;
     private String ranking;
+    private String famMemberName;
 
     public Rect(int column, int height) {
         this.column = column;
@@ -117,5 +118,13 @@ public class Rect {
 
     public String getRanking() {
         return ranking;
+    }
+
+    public String getFamMemberName() {
+        return famMemberName;
+    }
+
+    public void setFamMemberName(String famMemberName) {
+        this.famMemberName = famMemberName;
     }
 }

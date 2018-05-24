@@ -15,6 +15,10 @@ import java.util.List;
  */
 public class CriteriaFunctions {
 
+    private final static double WHITESPACE_LIMIT = 15;
+
+    private static HashMap<Rect, Rect> misPlacedAds;
+
     /**
      * This function checks if FamAds are overlapping with each other
      *
@@ -41,7 +45,7 @@ public class CriteriaFunctions {
                 boolean result = r1.x < r2.x + r2.width && r1.x + r1.width > r2.x && r1.y < r2.y + r2.height && r1.y + r1.height > r2.y;
 
                 if (result)
-                    return result;
+                    return true;
             }
         }
         return false;
@@ -68,7 +72,7 @@ public class CriteriaFunctions {
             boolean result = r.x > page.getWidth() || r.y > page.getHeight() || r.x + r.width < 0 || r.y + r.height < 0;
 
             if(result)
-                return result;
+                return true;
         }
         return false;
     }
@@ -101,31 +105,115 @@ public class CriteriaFunctions {
             }
             System.out.println();
             distanceToRectangleMap.put(r1, distances);
-            boolean isAcceptable = minimalValue(distanceToRectangleMap, 15);
+            double min = minimalValue(distanceToRectangleMap);
 
-            if (!isAcceptable)
+            System.out.println(min);
+
+            if (min >= WHITESPACE_LIMIT) {
                 return false;
+            }
         }
         return true;
     }
 
     /**
-     * Helper function to get the minimal value of a list from a hashmap
+     * Helper function to get the minimal value of a list from a hash map
      *
      * @param distanceToRectangleMap hashmap with rectangles coupled distances
      * @return boolean
      */
-    private static boolean minimalValue(Map<Rectangle,List<Double>> distanceToRectangleMap, int limit) {
+    private static double minimalValue(Map<Rectangle,List<Double>> distanceToRectangleMap) {
+       double min = 0;
+
         for (Object o : distanceToRectangleMap.entrySet()) {
             Map.Entry pair = (Map.Entry) o;
             List<Double> values = (List<Double>) pair.getValue();
-            Double minimalValue = Collections.min(values);
-
-            if (minimalValue <= limit)
-                return true;
+            min = Collections.min(values);
         }
-        return false;
+        return min;
     }
 
+    /**
+     * This method checks the order of the advertisements on family name, ranking and position where it is placed.
+     *
+     * @param page with a supply of advertisements
+     * @return boolean
+     */
+    public static boolean isAdInCorrectRankingOrder(Page page) {
+        ArrayList<Rect> rectangles = page.getSupply();
+        List<Boolean> rankingOrders = new ArrayList<>();
+        boolean isCorrectRankingOrder = false;
+        misPlacedAds = new HashMap<>();
 
+        for (Rect rect1 : rectangles) {
+            String famName1 = rect1.getFamMemberName();
+            int ranking1 = Integer.parseInt(rect1.getRanking());
+            Rectangle r1 = rect1.getRectangle();
+            int x1 = r1.x;
+            int y1 = r1.y;
+
+            for (Rect rect2 : rectangles) {
+                if (rect1 != rect2) {
+                    String famName2 = rect2.getFamMemberName();
+                    int ranking2 = Integer.parseInt(rect2.getRanking());
+                    Rectangle r2 = rect2.getRectangle();
+                    int x2 = r2.x;
+                    int y2 = r2.y;
+
+                    if (famName1.equals(famName2)) {
+                        System.out.println("Fam names are the same: Ad1: " + famName1 + " & Ad2: " + famName2);
+                        System.out.println("Ranking is : Ad 1: " + ranking1 + " & Ad2: " + ranking2);
+                        System.out.println("Ad Position 1: (" + x1 + "," + y1 + ") Ad Position 2: (" + x2 + "," + y2 +")");
+
+                        if ((ranking1 < ranking2 && x1 >= x2 && y1 >= y2) || (ranking1 > ranking2 && x1 <= x2 && y1 <= y2)) {
+                            System.out.println("Position is not right");
+                            System.out.println();
+                            misPlacedAds.put(rect1, rect2);
+                            rankingOrders.add(false);
+                        } else {
+                            System.out.println("Position is right");
+                            System.out.println();
+                        }
+                    }
+                }
+            }
+        }
+        if (rankingOrders.isEmpty())
+            isCorrectRankingOrder = true;
+
+        return isCorrectRankingOrder;
+    }
+
+    public static int evaluateRanking(int points) {
+
+        System.out.println(misPlacedAds.size());
+
+        if (!misPlacedAds.isEmpty()) {
+            for (Object o : misPlacedAds.entrySet()) {
+                Map.Entry pair = (Map.Entry) o;
+                Rect rect1 = (Rect) pair.getKey();
+                Rect rect2 = (Rect) pair.getValue();
+
+                System.out.println(rect1.getFamMemberName() + " " + rect1.getRanking());
+                System.out.println(rect2.getFamMemberName() + " " + rect2.getRanking());
+
+                int ranking1 = Integer.parseInt(rect1.getRanking());
+                Rectangle r1 = rect1.getRectangle();
+                int x1 = r1.x;
+                int y1 = r1.y;
+
+                int ranking2 = Integer.parseInt(rect2.getRanking());
+                Rectangle r2 = rect2.getRectangle();
+                int x2 = r2.x;
+                int y2 = r2.y;
+
+                if ((ranking1 < ranking2 && x1 >= x2 && y1 >= y2) || (ranking1 > ranking2 && x1 <= x2 && y1 <= y2)) {
+                    System.out.println("Ranking is off" + "Ranking AD1: " + ranking1 + " AD2: " + ranking2);
+                    System.out.println("Points decreased -1");
+                    points -= 1;
+                }
+            }
+        }
+        return points;
+    }
 }
