@@ -194,9 +194,6 @@ public class CriteriaFunctions {
                 Rect rect1 = (Rect) pair.getKey();
                 Rect rect2 = (Rect) pair.getValue();
 
-                System.out.println(rect1.getFamMemberName() + " " + rect1.getRanking());
-                System.out.println(rect2.getFamMemberName() + " " + rect2.getRanking());
-
                 int ranking1 = Integer.parseInt(rect1.getRanking());
                 Rectangle r1 = rect1.getRectangle();
                 int x1 = r1.x;
@@ -207,7 +204,7 @@ public class CriteriaFunctions {
                 int x2 = r2.x;
                 int y2 = r2.y;
 
-                if ((ranking1 < ranking2 && x1 >= x2 && y1 >= y2) || (ranking1 > ranking2 && x1 <= x2 && y1 <= y2)) {
+                if ((ranking1 < ranking2 && x1 >= x2 && y1 >= y2 && ranking1 < 5 && ranking2 < 5) || (ranking1 > ranking2 && x1 <= x2 && y1 <= y2 && ranking1 < 5)) {
                     System.out.println("Ranking is off" + "Ranking AD1: " + ranking1 + " AD2: " + ranking2);
                     System.out.println("Points decreased -1");
                     points -= 1;

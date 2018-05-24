@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import static nl.getthere.svggenerator.constants.ConstantsNDC.createAd;
 
 public class AdCollection {
-    private static Rect ad1 = createAd(5, 5, 1, 1, "01", "1", "Jan");
-    private static Rect ad2 = createAd(5, 5, 1, 10, "02", "1", "Jan");
+    private static Rect ad1 = createAd(5, 5, 1, 10, "01", "1", "Jan");
+    private static Rect ad2 = createAd(5, 5, 1, 1, "06", "1", "Jan");
     private static Rect ad3 = createAd(5, 5, 1, 20, "03", "1", "Jan");
     private static Rect ad4 = createAd(5, 5, 1, 30, "01", "1", "Klaas");
     private static Rect ad5 = createAd(5, 5, 10, 40, "02", "1", "Klaas");
