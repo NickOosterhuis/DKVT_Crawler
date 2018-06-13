@@ -5,10 +5,9 @@ import nl.getthere.helpers.FormatNdcData;
 import nl.getthere.imageprocessing.matching.KnnOpenCvMatcher;
 import nl.getthere.imageprocessing.matching.MatchManualMaterialId;
 import nl.getthere.imageprocessing.matching.RGBMatchingAlgorithm;
-import nl.getthere.helpers.PdfToImg;
+import nl.getthere.helpers.PdfToImgConvertor;
 import nl.getthere.imageprocessing.matching.RemainingMatches;
-import nl.getthere.svggenerator.Generate;
-import nl.getthere.svggenerator.generator.SvgGenerator;
+import nl.getthere.svggenerator.GenerateSvgFiles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.CommandLineRunner;
@@ -29,14 +28,13 @@ public class Application {
 	private NewspaperIdCrawler newspaperIdCrawler;
 
 	@Autowired
+    private FamAdCrawler famAdCrawler;
+
+	@Autowired
 	private FamAdImageCrawler famAdImageCrawler;
 
 	@Autowired
-    private FamAdCrawler famAdCrawler;
-
-
-	@Autowired
-    private PdfToImg pdfToImg;
+    private PdfToImgConvertor pdfToImg;
 
 	@Autowired
     private RGBMatchingAlgorithm rgbMatchingAlgorithm;
@@ -54,7 +52,7 @@ public class Application {
 	private MatchManualMaterialId manualMatcher;
 
 	@Autowired
-	private Generate generate;
+	private GenerateSvgFiles generateSvgFiles;
 
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(Application.class);
@@ -62,20 +60,20 @@ public class Application {
 		app.run(args);
 	}
 
-	@Bean
-	public CommandLineRunner startCrawling() {
-		return (args) -> {
-			//abbreviationCrawler.crawl();
-			//newspaperIdCrawler.crawl();
-            //famAdCrawler.crawl();
-			famAdImageCrawler.crawl();
-		};
-	}
-
 //	@Bean
-//    public CommandLineRunner createFolderStructure() {
-//	    return(args) -> pdfToImg.makeFolderStructure();
-//    }
+//	public CommandLineRunner startCrawling() {
+//		return (args) -> {
+//			//abbreviationCrawler.crawl();
+//			//newspaperIdCrawler.crawl();
+//            //famAdCrawler.crawl();
+//			//famAdImageCrawler.crawl();
+//		};
+//	}
+
+	@Bean
+    public CommandLineRunner createFolderStructure() {
+	    return(args) -> pdfToImg.makeDirectoryStructure();
+    }
 
 //    @Bean
 //    public CommandLineRunner bruteForceMatching() {
@@ -104,6 +102,6 @@ public class Application {
 
 //	@Bean
 //	public CommandLineRunner makeSVG() {
-//		return(args) -> generate.listSubDirectories("D:\\FamAds");
+//		return(args) -> generateSvgFiles.listSubDirectories("D:\\FamAds");
 //	}
 }

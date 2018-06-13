@@ -4,6 +4,8 @@ import nl.getthere.imageprocessing.models.NDCModel;
 import nl.getthere.imageprocessing.repositories.NDCRepository;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,14 +25,16 @@ import java.util.List;
  * @author Nick Oosterhuis
  */
 @Component
-public class PdfToImg {
+public class PdfToImgConvertor {
 
     @Autowired
     private NDCRepository ndcRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(PdfToImgConvertor.class);
+
     private final File directory = new File("D:\\testset familieberichten GKA_FBN_GEM_2017\\testset familieberichten");
 
-    public void makeFolderStructure() {
+    public void makeDirectoryStructure() {
 
         System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
 
@@ -54,13 +58,13 @@ public class PdfToImg {
                 File mapStructure = new File("D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumberString + "\\NDC");
 
                 if(mapStructure.exists()) {
-                    System.out.println("Folder Deleted ->" + mapStructure.getAbsolutePath());
+                   logger.info("Folder Deleted ->" + mapStructure.getAbsolutePath());
                     mapStructure.delete();
                 }
 
                 if (!mapStructure.exists()) {
                     mapStructure.mkdirs();
-                    System.out.println("Folder Created ->" + mapStructure.getAbsolutePath());
+                    logger.info("Folder Created ->" + mapStructure.getAbsolutePath());
                 }
 
                 try {
@@ -73,7 +77,7 @@ public class PdfToImg {
                             File output = new File(mapStructure + "\\" + filenameNumber.toString() + ".jpg");
                             ImageIO.write(image, "jpg", output);
                         }
-                        System.out.println("Image saved at -> " + mapStructure.getAbsolutePath());
+                        logger.info("Image saved at -> " + mapStructure.getAbsolutePath());
                         document.close();
                     }
                 } catch (IOException e) {

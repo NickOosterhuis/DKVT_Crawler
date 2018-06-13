@@ -5,7 +5,7 @@ import nl.getthere.dkvt_crawler.models.FamAdModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
 import nl.getthere.imageprocessing.models.NDCModel;
 import nl.getthere.imageprocessing.repositories.NDCRepository;
-import nl.getthere.helpers.PdfToImg;
+import nl.getthere.helpers.PdfToImgConvertor;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 import org.opencv.features2d.*;
@@ -38,7 +38,7 @@ public class KnnOpenCvMatcher {
     private NDCRepository ndcRepository;
 
     @Autowired
-    private PdfToImg pdfToImg;
+    private PdfToImgConvertor pdfToImg;
 
     private static final Logger logger = LoggerFactory.getLogger(KnnOpenCvMatcher.class);
 

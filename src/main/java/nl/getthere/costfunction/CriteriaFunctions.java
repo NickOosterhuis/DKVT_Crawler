@@ -2,6 +2,8 @@ package nl.getthere.costfunction;
 
 import nl.getthere.svggenerator.components.Page;
 import nl.getthere.svggenerator.components.Rect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.util.*;
@@ -18,6 +20,8 @@ public class CriteriaFunctions {
     private final static double WHITESPACE_LIMIT = 15;
 
     private static HashMap<Rect, Rect> misPlacedAds;
+
+    private static final Logger logger = LoggerFactory.getLogger(CriteriaFunctions.class);
 
     /**
      * This function checks if FamAds are intersecting with each other
@@ -36,11 +40,10 @@ public class CriteriaFunctions {
                 Rectangle r1 = rectangles.get(i).getRectangle();
                 Rectangle r2 = rectangles.get(j).getRectangle();
 
-                System.out.println("X: coordinate: R1: " + r1.x + " R2: " + r2.x);
-                System.out.println("Y: coordinate: R1: " + r1.y + " R2: " + r2.y);
-                System.out.println("WIDTH: R1: " + r1.width + " R2" + r2.width);
-                System.out.println("HEIGHT: R1 " + r1.height + " R2 " + r2.height);
-                System.out.println();
+                logger.info("X: coordinate: R1: " + r1.x + " R2: " + r2.x + "\n"
+                            + "Y: coordinate: R1: " + r1.y + " R2: " + r2.y + "\n"
+                            + "WIDTH: R1: " + r1.width + " R2" + r2.width + "\n"
+                            + "HEIGHT: R1 " + r1.height + " R2 " + r2.height + "\n");
 
                 boolean result = r1.x < r2.x + r2.width && r1.x + r1.width > r2.x && r1.y < r2.y + r2.height && r1.y + r1.height > r2.y;
 
@@ -59,15 +62,13 @@ public class CriteriaFunctions {
      */
     public static boolean isAdPageTranscending(Page page) {
         ArrayList<Rect> rectangles = page.getSupply();
-        System.out.println("Page size: WIDTH: " + page.getWidth() + " HEIGHT: " + page.getHeight());
+        logger.info("Page size: WIDTH: " + page.getWidth() + " HEIGHT: " + page.getHeight());
 
         for (Rect rect : rectangles) {
             Rectangle r = rect.getRectangle();
 
-            System.out.println("X coordinate: R1: " + r.x + " Y coordinate: " + r.y);
-            System.out.println("R1 Size: WIDTH: " + r.width + " HEIGHT: " + r.height);
-
-            System.out.println();
+            logger.info("X coordinate: R1: " + r.x + " Y coordinate: " + r.y + "\n"
+                        + "R1 Size: WIDTH: " + r.width + " HEIGHT: " + r.height + "\n");
 
             boolean result = r.x > page.getWidth() || r.y > page.getHeight() || r.x + r.width < 0 || r.y + r.height < 0;
 
@@ -100,14 +101,14 @@ public class CriteriaFunctions {
                     x1 = r1.x; y1 = r1.y; x2 = r2.x; y2 = r2.y;
                     distance = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
                     distances.add(distance);
-                    System.out.println("Distance between (" + x1 + ", " + y1 + ") and (" + x2 + ", " + y2 + ") is: " + distance);
+                    logger.info("Distance between (" + x1 + ", " + y1 + ") and (" + x2 + ", " + y2 + ") is: " + distance);
                 }
             }
             System.out.println();
             distanceToRectangleMap.put(r1, distances);
             double min = minimalValue(distanceToRectangleMap);
 
-            System.out.println(min);
+            logger.info("Minimum distance: " + min);
 
             if (min >= WHITESPACE_LIMIT) {
                 return false;
@@ -161,18 +162,16 @@ public class CriteriaFunctions {
                     int y2 = r2.y;
 
                     if (famName1.equals(famName2)) {
-                        System.out.println("Fam names are the same: Ad1: " + famName1 + " & Ad2: " + famName2);
-                        System.out.println("Ranking is : Ad 1: " + ranking1 + " & Ad2: " + ranking2);
-                        System.out.println("Ad Position 1: (" + x1 + "," + y1 + ") Ad Position 2: (" + x2 + "," + y2 +")");
+                        logger.info("Fam names are the same: Ad1: " + famName1 + " & Ad2: " + famName2 + "\n"
+                                    + "Ranking is : Ad 1: " + ranking1 + " & Ad2: " + ranking2 + "\n"
+                                    + "Ad Position 1: (" + x1 + "," + y1 + ") Ad Position 2: (" + x2 + "," + y2 +")" + "\n" );
 
                         if ((ranking1 < ranking2 && x1 >= x2 && y1 >= y2) || (ranking1 > ranking2 && x1 <= x2 && y1 <= y2)) {
-                            System.out.println("Position is not right");
-                            System.out.println();
+                            logger.info("Position is not right" + "\n");
                             misPlacedAds.put(rect1, rect2);
                             rankingOrders.add(false);
                         } else {
-                            System.out.println("Position is right");
-                            System.out.println();
+                            logger.info("Position is right" + "\n");
                         }
                     }
                 }
@@ -186,7 +185,7 @@ public class CriteriaFunctions {
 
     public static int evaluateRanking(int points) {
 
-        System.out.println(misPlacedAds.size());
+        logger.info("Total misplaced ads: " + misPlacedAds.size());
 
         if (!misPlacedAds.isEmpty()) {
             for (Object o : misPlacedAds.entrySet()) {
@@ -205,8 +204,8 @@ public class CriteriaFunctions {
                 int y2 = r2.y;
 
                 if ((ranking1 < ranking2 && x1 >= x2 && y1 >= y2 && ranking1 < 5 && ranking2 < 5) || (ranking1 > ranking2 && x1 <= x2 && y1 <= y2 && ranking1 < 5)) {
-                    System.out.println("Ranking is off" + "Ranking AD1: " + ranking1 + " AD2: " + ranking2);
-                    System.out.println("Points decreased -1");
+                    logger.info("Ranking is off" + "Ranking AD1: " + ranking1 + " AD2: " + ranking2 + "\n"
+                    + "Points decreased -1" + "\n");
                     points -= 1;
                 }
             }

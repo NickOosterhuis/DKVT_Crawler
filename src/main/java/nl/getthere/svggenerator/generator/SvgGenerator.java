@@ -2,6 +2,8 @@ package nl.getthere.svggenerator.generator;
 
 import nl.getthere.svggenerator.components.Rect;
 import nl.getthere.svggenerator.components.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -10,11 +12,13 @@ import java.util.ArrayList;
 @Component
 public class SvgGenerator {
 
+    private static final Logger logger = LoggerFactory.getLogger(SvgGenerator.class);
+
     public void write(ArrayList<Page> pages, String abbreviation, String date, String pageNumber) {
         try{
             for(Page page: pages) {
 
-                System.out.println("Advertenties gevonden: " + page.getSupply().size());
+                logger.info("Advertenties gevonden: " + page.getSupply().size());
 
                 File svg = new File("D:\\FamAdSVGS\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "opgemaakt.svg");
 
@@ -29,7 +33,7 @@ public class SvgGenerator {
                 writer.write("</svg>");
                 writer.close();
 
-                System.out.println("File printed on location: " + svg.getAbsolutePath());
+                logger.info("File printed on location: " + svg.getAbsolutePath());
             }
         } catch (Exception e) {
             e.printStackTrace();

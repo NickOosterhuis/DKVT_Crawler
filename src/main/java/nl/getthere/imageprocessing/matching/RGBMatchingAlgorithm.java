@@ -2,7 +2,7 @@ package nl.getthere.imageprocessing.matching;
 
 import nl.getthere.dkvt_crawler.models.FamAdModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
-import nl.getthere.helpers.PdfToImg;
+import nl.getthere.helpers.PdfToImgConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +32,7 @@ public class RGBMatchingAlgorithm {
     private FamAdRepository famAdRepository;
 
     @Autowired
-    private PdfToImg pdfToImg;
+    private PdfToImgConvertor pdfToImg;
 
     public BufferedImage match() throws IOException {
 

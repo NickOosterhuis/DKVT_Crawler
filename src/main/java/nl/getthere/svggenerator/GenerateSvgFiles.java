@@ -6,6 +6,8 @@ import nl.getthere.helpers.FamAdHelper;
 import nl.getthere.svggenerator.components.Page;
 import nl.getthere.svggenerator.components.Rect;
 import nl.getthere.svggenerator.generator.SvgGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +21,7 @@ import static nl.getthere.helpers.FamAdHelper.date;
 import static nl.getthere.svggenerator.constants.ConstantsNDC.*;
 
 @Component
-public class Generate {
+public class GenerateSvgFiles {
 
     @Autowired
     private FamAdRepository famAdRepository;
@@ -31,7 +33,7 @@ public class Generate {
     private FamAdHelper famAdHelper;
 
     private void generate() {
-        List<FamAdModel> famAds = famAdRepository.findAllByNewNewspaperAbbreviationAndDateAndPageNumberAndFamAdNdcDataModelAlgorithmCategory(
+        List<FamAdModel> famAds = famAdRepository.findAllByNewAbbreviationAndDateAndPageNumberAndFamAdNdcDataModelAlgorithmCategory(
                 abbreviation, date, pageNumber, 4);
 
         Page page = new Page();

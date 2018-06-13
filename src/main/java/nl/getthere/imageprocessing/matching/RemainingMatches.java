@@ -2,7 +2,7 @@ package nl.getthere.imageprocessing.matching;
 
 import nl.getthere.dkvt_crawler.models.FamAdModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
-import nl.getthere.helpers.PdfToImg;
+import nl.getthere.helpers.PdfToImgConvertor;
 import org.opencv.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class RemainingMatches {
     private FamAdRepository famAdRepository;
 
     @Autowired
-    private PdfToImg pdfToImg;
+    private PdfToImgConvertor pdfToImg;
 
     private static final Logger logger = LoggerFactory.getLogger(RemainingMatches.class);
 
