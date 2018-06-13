@@ -2,7 +2,7 @@ package nl.getthere.imageprocessing;
 
 import nl.getthere.configuration.CrawlerDbConfiguration;
 import nl.getthere.configuration.NdcDbConfiguration;
-import nl.getthere.dkvt_crawler.models.NewspaperAbbreviationModel;
+import nl.getthere.dkvt_crawler.models.AbbreviationModel;
 import nl.getthere.dkvt_crawler.repositories.NewspaperAbbreviationRepository;
 import nl.getthere.imageprocessing.models.NDCModel;
 import nl.getthere.imageprocessing.repositories.NDCRepository;
@@ -46,7 +46,7 @@ public class simpletest {
     @Transactional("crawlerTransactionManager")
     public void getFromCrawler() {
 
-        NewspaperAbbreviationModel model = new NewspaperAbbreviationModel();
+        AbbreviationModel model = new AbbreviationModel();
         model.setNewspaperName("ABCD");
         abbreviationRepository.save(model);
 

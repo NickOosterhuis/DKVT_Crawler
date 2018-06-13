@@ -1,6 +1,6 @@
 package nl.getthere.helpers;
 
-import nl.getthere.dkvt_crawler.models.FamAdPageModel;
+import nl.getthere.dkvt_crawler.models.FamAdModel;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,7 +14,7 @@ public class FamAdHelper {
     public static String krantVanToenDir;
     public static String ndcDir;
     public static String adName;
-    public static FamAdPageModel currentFamAd;
+    public static FamAdModel currentFamAd;
 
     public void directoryMapping(File file) {
         if (file.getName().startsWith("F") || file.getName().startsWith("G")) {
@@ -29,10 +29,10 @@ public class FamAdHelper {
         }
     }
 
-    public static void setDirs(List<FamAdPageModel> famAds) {
+    public static void setDirs(List<FamAdModel> famAds) {
 
-        for(FamAdPageModel famAd : famAds) {
-            String abbr = famAd.getNewNewspaperAbbreviation();
+        for(FamAdModel famAd : famAds) {
+            String abbr = famAd.getNewAbbreviation();
             String pageNum = famAd.getPageNumber();
             String date = famAd.getDate();
             adName = famAd.getName();

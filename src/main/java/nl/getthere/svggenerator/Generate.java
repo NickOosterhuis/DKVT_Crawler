@@ -1,6 +1,6 @@
 package nl.getthere.svggenerator;
 
-import nl.getthere.dkvt_crawler.models.FamAdPageModel;
+import nl.getthere.dkvt_crawler.models.FamAdModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
 import nl.getthere.helpers.FamAdHelper;
 import nl.getthere.svggenerator.components.Page;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class Generate {
     private FamAdHelper famAdHelper;
 
     private void generate() {
-        List<FamAdPageModel> famAds = famAdRepository.findAllByNewNewspaperAbbreviationAndDateAndPageNumberAndFamAdNdcDataModelAlgorithmCategory(
+        List<FamAdModel> famAds = famAdRepository.findAllByNewNewspaperAbbreviationAndDateAndPageNumberAndFamAdNdcDataModelAlgorithmCategory(
                 abbreviation, date, pageNumber, 4);
 
         Page page = new Page();
@@ -44,7 +43,7 @@ public class Generate {
         ArrayList<Rect> supply = new ArrayList<Rect>();
 
         int id = 0;
-        for (FamAdPageModel famAd : famAds) {
+        for (FamAdModel famAd : famAds) {
             int width = famAd.getFamAdPropertyModel().getWidth();
             int height = famAd.getFamAdPropertyModel().getHeight();
             int x = famAd.getFamAdPropertyModel().getX();

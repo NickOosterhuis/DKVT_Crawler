@@ -1,6 +1,6 @@
 package nl.getthere.helpers;
 
-import nl.getthere.dkvt_crawler.models.FamAdPageModel;
+import nl.getthere.dkvt_crawler.models.FamAdModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +23,9 @@ public class FormatNdcData {
     private static final Logger logger = LoggerFactory.getLogger(FormatNdcData.class);
 
     public void formatData() {
-        List<FamAdPageModel> famAds = famAdRepository.findAllByFamAdNdcDataModelAlgorithmCategory(4);
+        List<FamAdModel> famAds = famAdRepository.findAllByFamAdNdcDataModelAlgorithmCategory(4);
 
-        for(FamAdPageModel famAd: famAds) {
+        for(FamAdModel famAd: famAds) {
             String note = famAd.getFamAdNdcDataModel().getNote();
             String sectionCode = famAd.getFamAdNdcDataModel().getSectionCode();
             String[] splittedNote = formatNote(note);

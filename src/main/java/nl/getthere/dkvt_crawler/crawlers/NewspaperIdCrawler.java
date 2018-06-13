@@ -1,7 +1,7 @@
 package nl.getthere.dkvt_crawler.crawlers;
 
 
-import nl.getthere.dkvt_crawler.models.NewspaperAbbreviationModel;
+import nl.getthere.dkvt_crawler.models.AbbreviationModel;
 import nl.getthere.dkvt_crawler.models.FullNewspaperIdModel;
 import nl.getthere.dkvt_crawler.repositories.NewspaperAbbreviationRepository;
 import nl.getthere.dkvt_crawler.repositories.FullNewspaperIdRepository;
@@ -64,12 +64,12 @@ public class NewspaperIdCrawler {
      */
     private Set<String> crawlNextUrl() {
 
-        List<NewspaperAbbreviationModel> abbreviations = abbreviationRepo.findAll();
+        List<AbbreviationModel> abbreviations = abbreviationRepo.findAll();
         Set<String> urls = new HashSet<>();
 
         setupDriver();
 
-        for (NewspaperAbbreviationModel abbreviation : abbreviations) {
+        for (AbbreviationModel abbreviation : abbreviations) {
             String baseUrl = "https://www.dekrantvantoen.nl/vw/edition.do?dp=" + abbreviation.getNewspaperName() + "&altd=true&date=20180210&ed=00&v2=true";
             setBaseUrl(baseUrl);
 

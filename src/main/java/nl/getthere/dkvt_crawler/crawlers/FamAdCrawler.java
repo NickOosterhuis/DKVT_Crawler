@@ -1,6 +1,6 @@
 package nl.getthere.dkvt_crawler.crawlers;
 
-import nl.getthere.dkvt_crawler.models.FamAdPageModel;
+import nl.getthere.dkvt_crawler.models.FamAdModel;
 import nl.getthere.dkvt_crawler.models.FamAdPropertyModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
 import nl.getthere.imageprocessing.models.NDCModel;
@@ -191,7 +191,7 @@ public class FamAdCrawler {
             Matcher matcher = pattern.matcher(href);
             Matcher matcherMouseElement = pattern.matcher(mouseOver);
 
-            FamAdPageModel adModel = new FamAdPageModel();
+            FamAdModel adModel = new FamAdModel();
 
             if(matcher.find() && matcherMouseElement.find()) {
                 //strip javascript function to click advert
@@ -222,7 +222,7 @@ public class FamAdCrawler {
                         ", advert number = " + advertNumber + ", Column = " + column);
 
                 adModel.setName(advertID);
-                adModel.setNewspaperAbbreviation(abbreviation);
+                adModel.setAbbreviation(abbreviation);
                 adModel.setDate(date);
                 adModel.setPageNumber(pageNumber);
                 adModel.setPublicationNumber(publicationNumber);
@@ -231,13 +231,13 @@ public class FamAdCrawler {
 
                 switch (abbreviation) {
                     case "KSK":
-                        adModel.setNewNewspaperAbbreviation("GKA");
+                        adModel.setNewAbbreviation("GKA");
                         break;
                     case "BNH":
-                        adModel.setNewNewspaperAbbreviation("FBN");
+                        adModel.setNewAbbreviation("FBN");
                         break;
                     case "EMS":
-                        adModel.setNewNewspaperAbbreviation("GEM");
+                        adModel.setNewAbbreviation("GEM");
                         break;
                 }
 
@@ -257,7 +257,7 @@ public class FamAdCrawler {
      *
      * @param famAd model
      */
-    public void coupleFamAdProperties(FamAdPageModel famAd) {
+    public void coupleFamAdProperties(FamAdModel famAd) {
         //Get x, y coordinates and width and height of an advertisement
         WebElement columnId = driver.findElement(By.id(famAd.getColumnId()));
         WebElement nestedElement = columnId.findElement(By.id("f0"));
@@ -300,10 +300,10 @@ public class FamAdCrawler {
      * @param model of fam adverts
      * @return boolean
      */
-    private boolean isDuplicate(FamAdPageModel model) {
-        List<FamAdPageModel> models = famAdRepository.findAll();
+    private boolean isDuplicate(FamAdModel model) {
+        List<FamAdModel> models = famAdRepository.findAll();
 
-        for(FamAdPageModel c : models) {
+        for(FamAdModel c : models) {
             if(model.getName().equals(c.getName()))
                 return true;
         }

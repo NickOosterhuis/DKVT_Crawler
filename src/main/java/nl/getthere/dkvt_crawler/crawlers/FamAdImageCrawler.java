@@ -1,6 +1,6 @@
 package nl.getthere.dkvt_crawler.crawlers;
 
-import nl.getthere.dkvt_crawler.models.FamAdPageModel;
+import nl.getthere.dkvt_crawler.models.FamAdModel;
 import nl.getthere.dkvt_crawler.models.ImageModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
 import org.openqa.selenium.By;
@@ -40,11 +40,11 @@ public class FamAdImageCrawler {
     public void crawl() {
         setupDriver();
 
-        List<FamAdPageModel> famAds = famPageRepo.findAll();
+        List<FamAdModel> famAds = famPageRepo.findAll();
 
-        for(FamAdPageModel famAd : famAds) {
+        for(FamAdModel famAd : famAds) {
 
-            String url = "https://www.dekrantvantoen.nl/vw/article.do?code=" + famAd.getNewspaperAbbreviation()+ "&date="
+            String url = "https://www.dekrantvantoen.nl/vw/article.do?code=" + famAd.getAbbreviation()+ "&date="
                     + famAd.getDate()+"&v2=true&id=" + famAd.getName();
 
             ImageModel imageModel = new ImageModel();
@@ -55,13 +55,14 @@ public class FamAdImageCrawler {
             String imgLink = image.getAttribute("src");
 
             if(!isDuplicate(famAd)) {
-                logger.info("Image saved: fam ad =  " + famAd.getName() + ", with url = " + famAd.getFamAdPropertyModel().getImage().getUrl());
                 imageModel.setUrl(imgLink);
                 famAd.getFamAdPropertyModel().setImage(imageModel);
                 downloadImage(famAd);
+                logger.info("Image saved: fam ad =  " + famAd.getName() + ", with url = " + famAd.getFamAdPropertyModel().getImage().getUrl());
                 famPageRepo.save(famAd);
+            } else {
+                logger.info("DB: Image " + famAd.getName() + " already exists in database.");
             }
-            logger.info("DB: Image " + famAd.getName() + " already exists in database.");
         }
         quitDriver();
     }
@@ -85,11 +86,11 @@ public class FamAdImageCrawler {
      *
      * @param famAd model
      */
-    public void downloadImage(FamAdPageModel famAd) {
+    public void downloadImage(FamAdModel famAd) {
 
         String imgLink = famAd.getFamAdPropertyModel().getImage().getUrl();
         String name = famAd.getName();
-        String abbreviation = famAd.getNewNewspaperAbbreviation();
+        String abbreviation = famAd.getNewAbbreviation();
         String pageNumber = famAd.getPageNumber();
         String date = famAd.getDate();
 
@@ -121,10 +122,10 @@ public class FamAdImageCrawler {
      * @param model of fam images
      * @return boolean
      */
-    private boolean isDuplicate(FamAdPageModel model) {
-        List<FamAdPageModel> models = famPageRepo.findAll();
+    private boolean isDuplicate(FamAdModel model) {
+        List<FamAdModel> models = famPageRepo.findAll();
 
-        String abbreviation = model.getNewNewspaperAbbreviation();
+        String abbreviation = model.getNewAbbreviation();
         String date = model.getDate();
         String pageNumber = model.getPageNumber();
         String name = model.getName();
@@ -132,9 +133,11 @@ public class FamAdImageCrawler {
         File dir = new File("D:\\FamAds\\" + abbreviation + "\\" + date +  "\\" + pageNumber + "\\Krant Van Toen" + "\\" + name + ".jpg");
         logger.info(dir.getAbsolutePath());
 
-        for(FamAdPageModel c : models) {
-            if(model.getFamAdPropertyModel().getImage().equals(c.getFamAdPropertyModel().getImage()) && dir.exists())
-                return true;
+        for(FamAdModel c : models) {
+            if(model.getFamAdPropertyModel().getImage() != null && c.getFamAdPropertyModel().getImage() != null) {
+                if (model.getFamAdPropertyModel().getImage().getUrl().equals(c.getFamAdPropertyModel().getImage().getUrl()) && dir.exists())
+                    return true;
+            }
         }
         return false;
     }

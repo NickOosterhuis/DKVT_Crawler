@@ -8,7 +8,7 @@ import javax.persistence.*;
  * @author Nick Oosterhuis
  */
 @Entity(name = "FamAds")
-public class FamAdPageModel {
+public class FamAdModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,10 +21,10 @@ public class FamAdPageModel {
     private String date;
 
     @Column(nullable = false, name = "abbreviation")
-    private String newspaperAbbreviation;
+    private String abbreviation;
 
     @Column(name = "new_abbreviation")
-    private String newNewspaperAbbreviation;
+    private String newAbbreviation;
 
     @Column(nullable = false, name = "page_number")
     private String pageNumber;
@@ -94,20 +94,20 @@ public class FamAdPageModel {
         this.date = date;
     }
 
-    public String getNewspaperAbbreviation() {
-        return newspaperAbbreviation;
+    public String getAbbreviation() {
+        return abbreviation;
     }
 
-    public void setNewspaperAbbreviation(String newspaperAbbreviation) {
-        this.newspaperAbbreviation = newspaperAbbreviation;
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
     }
 
-    public String getNewNewspaperAbbreviation() {
-        return newNewspaperAbbreviation;
+    public String getNewAbbreviation() {
+        return newAbbreviation;
     }
 
-    public void setNewNewspaperAbbreviation(String newNewspaperAbbreviation) {
-        this.newNewspaperAbbreviation = newNewspaperAbbreviation;
+    public void setNewAbbreviation(String newAbbreviation) {
+        this.newAbbreviation = newAbbreviation;
     }
 
     public String getPageNumber() {
@@ -122,15 +122,8 @@ public class FamAdPageModel {
         this.publicationNumber = publicationNumber;
     }
 
-    public String getPublicationNumber() {
-        return publicationNumber;
-    }
-
     public void setAdvertNumber(String advertNumber) {
         this.advertNumber = advertNumber;
     }
 
-    public String getAdvertNumber() {
-        return advertNumber;
-    }
 }

@@ -34,8 +34,6 @@ public class Application {
 	@Autowired
     private FamAdCrawler famAdCrawler;
 
-	@Autowired
-	private RemainingAdCrawler remainingAdCrawler;
 
 	@Autowired
     private PdfToImg pdfToImg;
@@ -64,16 +62,15 @@ public class Application {
 		app.run(args);
 	}
 
-//	@Bean
-//	public CommandLineRunner startCrawling() {
-//		return (args) -> {
-//			abbreviationCrawler.crawl();
-//			newspaperIdCrawler.crawl();
-//            famAdCrawler.crawl();
-//			remainingAdCrawler.crawl();
-//			famAdImageCrawler.crawl();
-//		};
-//	}
+	@Bean
+	public CommandLineRunner startCrawling() {
+		return (args) -> {
+			//abbreviationCrawler.crawl();
+			//newspaperIdCrawler.crawl();
+            //famAdCrawler.crawl();
+			famAdImageCrawler.crawl();
+		};
+	}
 
 //	@Bean
 //    public CommandLineRunner createFolderStructure() {
@@ -85,10 +82,10 @@ public class Application {
 //	    return(args) -> rgbMatchingAlgorithm.match();
 //    }
 
-	@Bean
-	public CommandLineRunner KnnMatching() {
-		return(args) -> knnOpenCvMatcher.match();
-	}
+//	@Bean
+//	public CommandLineRunner KnnMatching() {
+//		return(args) -> knnOpenCvMatcher.match();
+//	}
 
 //	@Bean
 //	public CommandLineRunner checkMaterialIds() {

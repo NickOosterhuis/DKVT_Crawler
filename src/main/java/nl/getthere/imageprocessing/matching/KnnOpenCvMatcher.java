@@ -1,7 +1,7 @@
 package nl.getthere.imageprocessing.matching;
 
 import nl.getthere.dkvt_crawler.models.FamAdNdcDataModel;
-import nl.getthere.dkvt_crawler.models.FamAdPageModel;
+import nl.getthere.dkvt_crawler.models.FamAdModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
 import nl.getthere.imageprocessing.models.NDCModel;
 import nl.getthere.imageprocessing.repositories.NDCRepository;
@@ -18,7 +18,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static nl.getthere.helpers.FamAdHelper.*;
 import static org.opencv.imgcodecs.Imgcodecs.CV_LOAD_IMAGE_COLOR;
 import static org.opencv.imgcodecs.Imgcodecs.imread;
 import static org.opencv.imgcodecs.Imgcodecs.imwrite;
@@ -43,8 +42,9 @@ public class KnnOpenCvMatcher {
 
     private static final Logger logger = LoggerFactory.getLogger(KnnOpenCvMatcher.class);
 
+    private String adName;
     private String ndcFileName;
-
+    private FamAdModel currentFamAd;
 
     private Mat objectImage;
     private Mat sceneImage;
@@ -57,47 +57,61 @@ public class KnnOpenCvMatcher {
     private Mat outputImage;
 
     public void match() {
-        List<FamAdPageModel> famAds = famAdRepository.findAllByFamAdNdcDataModelAlgorithmCategory(1);
+        List<FamAdModel> famAds = famAdRepository.findAllByFamAdNdcDataModelAlgorithmCategory(1);
 
         matchAds(famAds);
     }
 
-    private void matchAds(List<FamAdPageModel> famAds) {
+    private void matchAds(List<FamAdModel> famAds) {
         if (famAds.isEmpty()) {
             coupleDB();
             famAds = famAdRepository.findAllByFamAdNdcDataModelAlgorithmCategory(1);
         }
-        setDirs(famAds);
 
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-        File ndcFolder = new File(ndcDir);
+        for (FamAdModel famAd : famAds) {
+            String abbreviation = famAd.getNewAbbreviation();
+            String pageNumber = famAd.getPageNumber();
+            String date = famAd.getDate();
+            adName = famAd.getName();
+            currentFamAd = famAd;
 
-        List<File> ndcFiles = pdfToImg.addFilesToList(ndcFolder);
-
-        for (File ndcFile : ndcFiles) {
-            ndcFileName = ndcFile.getName();
-            ndcFileDir = ndcDir + ndcFileName;
-
-            if(currentFamAd.getFamAdNdcDataModel().getAlgorithmCategory() == 5) {
-                currentFamAd.getFamAdNdcDataModel().setAlgorithmCategory(1);
+            if(date.equals("20171228")) {
+                date = "20171227";
             }
 
-            logger.info("Matching: Matcher Started");
+            String krantVanToenDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "Krant Van Toen" + "\\" + adName + ".jpg";
+            String ndcDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "NDC\\";
 
-            objectImage = imread(krantVanToenDir, CV_LOAD_IMAGE_COLOR);
-            sceneImage = imread(ndcFileDir, CV_LOAD_IMAGE_COLOR);
+            File ndcFolder = new File(ndcDir);
 
-            logger.info("Matching: " + krantVanToenDir + " VS " + ndcFileDir);
+            List<File> ndcFiles = pdfToImg.addFilesToList(ndcFolder);
 
-            AlgorithmSettings(currentFamAd);
+            for (File ndcFile : ndcFiles) {
+                ndcFileName = ndcFile.getName();
+                ndcFileDir = ndcDir + ndcFileName;
+
+                if(currentFamAd.getFamAdNdcDataModel().getAlgorithmCategory() == 5) {
+                    currentFamAd.getFamAdNdcDataModel().setAlgorithmCategory(1);
+                }
+
+                logger.info("Matching: Matcher Started");
+
+                objectImage = imread(krantVanToenDir, CV_LOAD_IMAGE_COLOR);
+                sceneImage = imread(ndcFileDir, CV_LOAD_IMAGE_COLOR);
+
+                logger.info("Matching: " + krantVanToenDir + " VS " + ndcFileDir);
+
+                AlgorithmSettings(currentFamAd);
+            }
         }
     }
 
     private void coupleDB() {
-        List<FamAdPageModel> models = famAdRepository.findAll();
+        List<FamAdModel> models = famAdRepository.findAll();
 
-        for (FamAdPageModel model : models) {
+        for (FamAdModel model : models) {
             FamAdNdcDataModel ndcDataModel = new FamAdNdcDataModel();
             ndcDataModel.setAlgorithmCategory(1);
             ndcDataModel.setMatched(false);
@@ -108,7 +122,7 @@ public class KnnOpenCvMatcher {
         logger.info("Model Coupling: Models are set!");
     }
 
-    private void AlgorithmSettings(FamAdPageModel famAd) {
+    private void AlgorithmSettings(FamAdModel famAd) {
 
         int algorithmCategory = famAd.getFamAdNdcDataModel().getAlgorithmCategory();
 
@@ -259,7 +273,6 @@ public class KnnOpenCvMatcher {
 
             //drawing image for testing
             transformAndDraw(goodMatchesList, objectKeyPoints, sceneKeyPoints, objectImage, ndcFileDir, sceneImage, newKeypointColor, outputImage);
-
             famAdRepository.save(currentFamAd);
         } else if (goodMatchesList.size() < pointLimit && currentFamAd.getFamAdNdcDataModel().getAlgorithmCategory() == 1 && !currentFamAd.getFamAdNdcDataModel().isMatched()) {
             logger.info("Matching: No matchAds found with Akaze algorithm, switching algorithms!");

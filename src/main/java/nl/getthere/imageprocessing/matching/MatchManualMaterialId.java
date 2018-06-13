@@ -1,7 +1,7 @@
 package nl.getthere.imageprocessing.matching;
 
 import nl.getthere.dkvt_crawler.models.FamAdNdcDataModel;
-import nl.getthere.dkvt_crawler.models.FamAdPageModel;
+import nl.getthere.dkvt_crawler.models.FamAdModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
 import nl.getthere.imageprocessing.models.NDCModel;
 import nl.getthere.imageprocessing.repositories.NDCRepository;
@@ -26,11 +26,11 @@ public class MatchManualMaterialId {
 
     public void match() {
 
-        List<FamAdPageModel> famAdModels = famAdRepository.findAllByFamAdNdcDataModelMaterialIdNotNull();
+        List<FamAdModel> famAdModels = famAdRepository.findAllByFamAdNdcDataModelMaterialIdNotNull();
 
         System.out.println(famAdModels.size());
 
-        for(FamAdPageModel model : famAdModels) {
+        for(FamAdModel model : famAdModels) {
             long materialId = model.getFamAdNdcDataModel().getMaterialId();
 
             if(materialId > 0 && model.getFamAdNdcDataModel().getAlgorithmCategory() == 5) {

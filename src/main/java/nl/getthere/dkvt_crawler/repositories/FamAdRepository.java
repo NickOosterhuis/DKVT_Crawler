@@ -1,6 +1,6 @@
 package nl.getthere.dkvt_crawler.repositories;
 
-import nl.getthere.dkvt_crawler.models.FamAdPageModel;
+import nl.getthere.dkvt_crawler.models.FamAdModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -8,10 +8,10 @@ import java.util.List;
 /**
  * @author Nick Oosterhuis
  */
-public interface FamAdRepository extends JpaRepository<FamAdPageModel, Long> {
-    List<FamAdPageModel> findAllByFamAdNdcDataModelAlgorithmCategory(int category);
-    List<FamAdPageModel> findAllByFamAdNdcDataModelMaterialIdNotNull();
-    List<FamAdPageModel> findAllByNewNewspaperAbbreviationAndDateAndPageNumberAndFamAdNdcDataModelAlgorithmCategory(String abbreviation, String date, String pageNumber, int category);
+public interface FamAdRepository extends JpaRepository<FamAdModel, Long> {
+    List<FamAdModel> findAllByFamAdNdcDataModelAlgorithmCategory(int category);
+    List<FamAdModel> findAllByFamAdNdcDataModelMaterialIdNotNull();
+    List<FamAdModel> findAllByNewNewspaperAbbreviationAndDateAndPageNumberAndFamAdNdcDataModelAlgorithmCategory(String abbreviation, String date, String pageNumber, int category);
 
     boolean existsByFamAdNdcDataModelMaterialId(long materialId);
 

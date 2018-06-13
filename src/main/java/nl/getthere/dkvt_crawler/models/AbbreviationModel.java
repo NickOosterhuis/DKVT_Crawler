@@ -9,7 +9,7 @@ import java.util.Date;
  * @author Nick Oosterhuis
  */
 @Entity(name = "Abbreviations")
-public class NewspaperAbbreviationModel {
+public class AbbreviationModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

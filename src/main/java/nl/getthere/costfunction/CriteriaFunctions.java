@@ -20,12 +20,12 @@ public class CriteriaFunctions {
     private static HashMap<Rect, Rect> misPlacedAds;
 
     /**
-     * This function checks if FamAds are overlapping with each other
+     * This function checks if FamAds are intersecting with each other
      *
      * @param page with a supply of advertisements
      * @return boolean
      */
-    public static boolean isOverlapping(Page page) {
+    public static boolean isIntersecting(Page page) {
         ArrayList<Rect> rectangles = page.getSupply();
 
         for (int i = 0; i < rectangles.size(); i++) {

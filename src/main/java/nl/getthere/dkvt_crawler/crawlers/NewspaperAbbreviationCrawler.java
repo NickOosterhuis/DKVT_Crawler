@@ -1,6 +1,6 @@
 package nl.getthere.dkvt_crawler.crawlers;
 
-import nl.getthere.dkvt_crawler.models.NewspaperAbbreviationModel;
+import nl.getthere.dkvt_crawler.models.AbbreviationModel;
 import nl.getthere.dkvt_crawler.repositories.NewspaperAbbreviationRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -44,7 +44,7 @@ public class NewspaperAbbreviationCrawler {
 
         for(WebElement newspaperAbbreviation : newspaperTypes) {
             String abbreviation = newspaperAbbreviation.getAttribute("value");
-            NewspaperAbbreviationModel newspaper = new NewspaperAbbreviationModel();
+            AbbreviationModel newspaper = new AbbreviationModel();
             newspaper.setNewspaperName(abbreviation);
 
             if(!isDuplicate(newspaper)) {
@@ -63,7 +63,7 @@ public class NewspaperAbbreviationCrawler {
         List<String> abbreviations = newspapersToDelete();
 
         for (String abbreviation : abbreviations) {
-            NewspaperAbbreviationModel model = repo.findByNewspaperName(abbreviation);
+            AbbreviationModel model = repo.findByNewspaperName(abbreviation);
             repo.delete(model);
         }
     }
@@ -73,10 +73,10 @@ public class NewspaperAbbreviationCrawler {
      * @param model of fam adverts
      * @return boolean
      */
-    private boolean isDuplicate(NewspaperAbbreviationModel model) {
-        List<NewspaperAbbreviationModel> models = repo.findAll();
+    private boolean isDuplicate(AbbreviationModel model) {
+        List<AbbreviationModel> models = repo.findAll();
 
-        for(NewspaperAbbreviationModel c : models) {
+        for(AbbreviationModel c : models) {
             if(model.getNewspaperName().equals(c.getNewspaperName()))
                 return true;
         }

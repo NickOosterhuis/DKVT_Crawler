@@ -1,8 +1,7 @@
 package nl.getthere.imageprocessing.matching;
 
-import nl.getthere.dkvt_crawler.models.FamAdPageModel;
+import nl.getthere.dkvt_crawler.models.FamAdModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
-import nl.getthere.imageprocessing.repositories.NDCRepository;
 import nl.getthere.helpers.PdfToImg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,7 +36,7 @@ public class RGBMatchingAlgorithm {
 
     public BufferedImage match() throws IOException {
 
-        List<FamAdPageModel> famAds = famAdRepository.findAll();
+        List<FamAdModel> famAds = famAdRepository.findAll();
         BufferedImage winner;
 
         setDirs(famAds);
