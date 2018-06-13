@@ -70,20 +70,20 @@ public class Application {
 //		};
 //	}
 
-	@Bean
-    public CommandLineRunner createFolderStructure() {
-	    return(args) -> pdfToImg.makeDirectoryStructure();
-    }
+//	@Bean
+//    public CommandLineRunner createFolderStructure() {
+//	    return(args) -> pdfToImg.makeDirectoryStructure();
+//    }
 
 //    @Bean
 //    public CommandLineRunner bruteForceMatching() {
 //	    return(args) -> rgbMatchingAlgorithm.match();
 //    }
 
-//	@Bean
-//	public CommandLineRunner KnnMatching() {
-//		return(args) -> knnOpenCvMatcher.match();
-//	}
+	@Bean
+	public CommandLineRunner KnnMatching() {
+		return(args) -> knnOpenCvMatcher.match();
+	}
 
 //	@Bean
 //	public CommandLineRunner checkMaterialIds() {

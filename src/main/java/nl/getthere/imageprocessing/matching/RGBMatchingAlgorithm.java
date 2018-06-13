@@ -3,6 +3,8 @@ package nl.getthere.imageprocessing.matching;
 import nl.getthere.dkvt_crawler.models.FamAdModel;
 import nl.getthere.dkvt_crawler.repositories.FamAdRepository;
 import nl.getthere.helpers.PdfToImgConvertor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +16,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
-import static nl.getthere.helpers.FamAdHelper.krantVanToenDir;
-import static nl.getthere.helpers.FamAdHelper.ndcDir;
-import static nl.getthere.helpers.FamAdHelper.setDirs;
 
 /**
  * Bruteforce matching algorithm which results in an inaccurate match between
@@ -34,35 +32,45 @@ public class RGBMatchingAlgorithm {
     @Autowired
     private PdfToImgConvertor pdfToImg;
 
+    private static final Logger logger = LoggerFactory.getLogger(RGBMatchingAlgorithm.class);
+
     public BufferedImage match() throws IOException {
 
         List<FamAdModel> famAds = famAdRepository.findAll();
-        BufferedImage winner;
+        BufferedImage winner = null;
 
-        setDirs(famAds);
+        for(FamAdModel famAd : famAds) {
 
-        HashMap<Double, BufferedImage> potentialWinners = new HashMap<>();
+            HashMap<Double, BufferedImage> potentialWinners = new HashMap<>();
 
-        File dkvtFile = new File(krantVanToenDir);
-        String dkvtName = dkvtFile.getName();
-        BufferedImage dkvtImage = ImageIO.read(dkvtFile);
+            String abbreviation = famAd.getNewAbbreviation();
+            String pageNumber = famAd.getPageNumber();
+            String date = famAd.getDate();
+            String adName = famAd.getName();
 
-        File ndcFolder = new File(ndcDir);
-        List<File> ndcFiles = pdfToImg.addFilesToList(ndcFolder);
+            String krantVanToenDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "Krant Van Toen" + "\\" + adName + ".jpg";
+            String ndcDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "NDC";
+
+            File dkvtFile = new File(krantVanToenDir);
+            String dkvtName = dkvtFile.getName();
+            BufferedImage dkvtImage = ImageIO.read(dkvtFile);
+
+            File ndcFolder = new File(ndcDir);
+            List<File> ndcFiles = pdfToImg.addFilesToList(ndcFolder);
 
 
-        for (File ndcFile : ndcFiles) {
-            String ndcName = ndcFile.getName();
-            BufferedImage ndcImage = ImageIO.read(ndcFile);
+            for (File ndcFile : ndcFiles) {
+                String ndcName = ndcFile.getName();
+                BufferedImage ndcImage = ImageIO.read(ndcFile);
 
-            double percentage = Math.round(getDifferencePercent(dkvtImage, ndcImage, dkvtName, ndcName));
-            potentialWinners.put(percentage, ndcImage);
+                double percentage = Math.round(getDifferencePercent(dkvtImage, ndcImage, dkvtName, ndcName));
+                potentialWinners.put(percentage, ndcImage);
 
-            System.out.println(percentage);
+                logger.info("Percentage: " + percentage);
+            }
+
+            winner = showWinner(potentialWinners);
         }
-
-        winner = showWinner(potentialWinners);
-        System.out.println(winner);
         return winner;
     }
 
@@ -96,7 +104,7 @@ public class RGBMatchingAlgorithm {
         long maxDiff = 3L * 255 * width1* height1;
 
         double percentage = 100.0 * diff / maxDiff;
-        System.out.println("Difference = " + percentage + ", img name = " + dkvtName + " VS " + ndcName);
+        logger.info("Difference = " + percentage + ", img name = " + dkvtName + " VS " + ndcName);
 
         return percentage;
     }
