@@ -63,6 +63,7 @@ public class ConsoleApp implements CommandLineRunner {
             logger.info("1 = Crawler Menu");
             logger.info("2 = Convert pdf to image and make folder structure");
             logger.info("3 = Matching Menu");
+            logger.info("4 = Generate SVG files");
 
             String text = scanner.nextLine();
 
@@ -72,6 +73,8 @@ public class ConsoleApp implements CommandLineRunner {
                 case "2": pdfToImg.makeDirectoryStructure();
                     break;
                 case "3": matcherMenu();
+                    break;
+                case "4": generateSvgFiles.listSubDirectories("D:\\FamAds");
                     break;
                 default: run();
             }
@@ -85,7 +88,6 @@ public class ConsoleApp implements CommandLineRunner {
             logger.info("2 = Full abbreviations");
             logger.info("3 = Family Advertisements");
             logger.info("4 = Images");
-            logger.info("5 = Generate SVG files");
             logger.info("q = back");
 
             String text = scanner.nextLine();
@@ -100,8 +102,6 @@ public class ConsoleApp implements CommandLineRunner {
                 case "3": famAdCrawler.crawl();
                     break;
                 case "4": famAdImageCrawler.crawl();
-                    break;
-                case "5": generateSvgFiles.listSubDirectories("D:\\FamAds");
                     break;
                 default: crawlerMenu();
             }
