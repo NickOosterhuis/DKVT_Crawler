@@ -1,7 +1,6 @@
 package nl.getthere.dkvt_crawler.models;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * The abbreviation model

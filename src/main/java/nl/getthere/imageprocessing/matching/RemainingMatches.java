@@ -14,9 +14,6 @@ import java.util.*;
 
 import static nl.getthere.helpers.FamAdHelper.ndcDir;
 import static nl.getthere.helpers.FamAdHelper.setDirs;
-import static org.opencv.imgcodecs.Imgcodecs.imread;
-import static org.opencv.imgcodecs.Imgcodecs.imwrite;
-import static org.opencv.imgproc.Imgproc.line;
 
 @Component
 public class RemainingMatches {

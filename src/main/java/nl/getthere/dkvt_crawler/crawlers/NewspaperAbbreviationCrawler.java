@@ -7,7 +7,6 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -21,7 +20,6 @@ import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
  * @author Nick Oosterhuis
  */
 @Component
-@Order(1)
 public class NewspaperAbbreviationCrawler {
 
     @Autowired
@@ -59,7 +57,7 @@ public class NewspaperAbbreviationCrawler {
     /**
      * Method to delete the newspapers which are too old from the DB
      */
-    public void deleteAbbreviations() {
+    private void deleteAbbreviations() {
         List<String> abbreviations = newspapersToDelete();
 
         for (String abbreviation : abbreviations) {

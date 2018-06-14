@@ -8,7 +8,6 @@ import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -26,7 +25,6 @@ import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
  * @author Nick Oosterhuis
  */
 @Component
-@Order(4)
 public class FamAdImageCrawler {
 
     @Autowired
@@ -73,7 +71,7 @@ public class FamAdImageCrawler {
      * @param url of the family advert that's being crawled
      * @return WebElement with the contents of the image url
      */
-    public WebElement saveImageUrl(String url) {
+    private WebElement saveImageUrl(String url) {
         setBaseUrl(url);
         WebElement iFrame = driver.findElement(By.name("art_content"));
         driver.switchTo().frame(iFrame);
@@ -86,7 +84,7 @@ public class FamAdImageCrawler {
      *
      * @param famAd model
      */
-    public void downloadImage(FamAdModel famAd) {
+    private void downloadImage(FamAdModel famAd) {
 
         String imgLink = famAd.getFamAdPropertyModel().getImage().getUrl();
         String name = famAd.getName();
