@@ -41,6 +41,8 @@ public class FamAdHelper {
             if(date.equals("20171228")) {
                 date = "20171227";
             }
+
+            //set to wished path
             krantVanToenDir = "D:\\FamAds\\" + abbr + "\\" + date + "\\" + pageNum + "\\" + "Krant Van Toen" + "\\" + adName + ".jpg";
             ndcDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "NDC\\";
         }

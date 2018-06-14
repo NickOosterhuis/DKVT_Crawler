@@ -75,7 +75,7 @@ public class ConsoleApp implements CommandLineRunner {
                     break;
                 case "3": matcherMenu();
                     break;
-                case "4": generateSvgFiles.listSubDirectories("D:\\FamAds");
+                case "4": generateSvgFiles.listSubDirectories("D:\\FamAds"); //set to root location of the familyAd collection
                     break;
                 case "q": System.exit(404);
                 default: run();

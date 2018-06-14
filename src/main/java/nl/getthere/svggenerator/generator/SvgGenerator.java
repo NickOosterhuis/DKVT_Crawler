@@ -20,6 +20,7 @@ public class SvgGenerator {
 
                 logger.info("Advertenties gevonden: " + page.getSupply().size());
 
+                //set to wished path
                 File svg = new File("D:\\FamAdSVGS\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "opgemaakt.svg");
 
                 if(!svg.exists())

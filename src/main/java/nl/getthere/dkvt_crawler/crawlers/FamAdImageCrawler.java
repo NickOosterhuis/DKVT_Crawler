@@ -93,6 +93,7 @@ public class FamAdImageCrawler {
         String date = famAd.getDate();
 
         try{
+            //set to wished path
             File dir = new File("D:\\FamAds\\" + abbreviation + "\\" + date +  "\\" + pageNumber + "\\Krant Van Toen");
 
             if(!dir.exists())
@@ -128,6 +129,7 @@ public class FamAdImageCrawler {
         String pageNumber = model.getPageNumber();
         String name = model.getName();
 
+        //set to wished path
         File dir = new File("D:\\FamAds\\" + abbreviation + "\\" + date +  "\\" + pageNumber + "\\Krant Van Toen" + "\\" + name + ".jpg");
         logger.info(dir.getAbsolutePath());
 

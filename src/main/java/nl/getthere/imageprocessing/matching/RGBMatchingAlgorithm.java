@@ -48,6 +48,7 @@ public class RGBMatchingAlgorithm {
             String date = famAd.getDate();
             String adName = famAd.getName();
 
+            //set to wished path
             String krantVanToenDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "Krant Van Toen" + "\\" + adName + ".jpg";
             String ndcDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "NDC";
 

@@ -81,6 +81,7 @@ public class KnnOpenCvMatcher {
                 date = "20171227";
             }
 
+            //set to wished path
             String krantVanToenDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "Krant Van Toen" + "\\" + adName + ".jpg";
             String ndcDir = "D:\\FamAds\\" + abbreviation + "\\" + date + "\\" + pageNumber + "\\" + "NDC\\";
 
@@ -353,11 +354,14 @@ public class KnnOpenCvMatcher {
 
         Features2d.drawMatches(objectImage, objectKeyPoints, sceneImage, sceneKeyPoints, goodMatches, matchOutput, matchesColor, newKeypointColor, new MatOfByte(), 2);
 
+        //set to wished path
         File dir = new File("D:\\Matches");
 
         if (!dir.exists()) {
             dir.mkdirs();
         }
+
+        //set to same path as before
         imwrite("D:\\Matches\\" + adName + "_matched" + ".jpg", matchOutput);
     }
 }
