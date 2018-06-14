@@ -64,6 +64,7 @@ public class ConsoleApp implements CommandLineRunner {
             logger.info("2 = Convert pdf to image and make folder structure");
             logger.info("3 = Matching Menu");
             logger.info("4 = Generate SVG files");
+            logger.info("q = quit app");
 
             String text = scanner.nextLine();
 
@@ -76,6 +77,7 @@ public class ConsoleApp implements CommandLineRunner {
                     break;
                 case "4": generateSvgFiles.listSubDirectories("D:\\FamAds");
                     break;
+                case "q": System.exit(404);
                 default: run();
             }
         }
