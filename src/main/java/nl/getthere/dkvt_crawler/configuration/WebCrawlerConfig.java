@@ -1,4 +1,4 @@
-package nl.getthere.dkvt_crawler.crawlers;
+package nl.getthere.dkvt_crawler.configuration;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -15,6 +15,8 @@ public class WebCrawlerConfig {
     public static ChromeOptions options;
 
     public static void setupDriver() {
+
+        //set path to chrome driver location on disk
         System.setProperty("webdriver.chrome.driver", "D:\\Chrome driver\\chromedriver.exe");
         options = new ChromeOptions();
         options.addArguments("--headless");

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 import static nl.getthere.dkvt_crawler.constants.NewspapersToDelete.newspapersToDelete;
-import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
+import static nl.getthere.dkvt_crawler.configuration.WebCrawlerConfig.*;
 
 /**
  * Class to save and crawl the abbreviations of every specified newspaper

@@ -17,7 +17,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 
-import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
+import static nl.getthere.dkvt_crawler.configuration.WebCrawlerConfig.*;
 
 /**
  * Class to gather the saved familyAds form the DB, download the images to disk and crop them to a certain size

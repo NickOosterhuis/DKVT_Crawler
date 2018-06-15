@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 
-import static nl.getthere.dkvt_crawler.crawlers.WebCrawlerConfig.*;
+import static nl.getthere.dkvt_crawler.configuration.WebCrawlerConfig.*;
 
 /**
  * Class to gather the full id of every newspaper, these are saved into the DB
